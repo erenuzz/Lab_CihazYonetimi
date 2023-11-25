@@ -11,7 +11,7 @@ namespace ProtaWebPortal.Models
         {
             MailMessage msg = new MailMessage(); //Mesaj gövdesini tanımlıyoruz...
             msg.Subject = konu;
-            msg.From = new MailAddress("beoerp00@gmail.com", "Piksel Bilişim");
+            msg.From = new MailAddress("", "");
             msg.To.Add(new MailAddress(aliciMail, aliciIsim));                        
             msg.IsBodyHtml = true;
             msg.Body = mesajIcerigi;                       
@@ -19,7 +19,7 @@ namespace ProtaWebPortal.Models
 
             //SMTP/Gönderici bilgilerinin yer aldığı erişim/doğrulama bilgileri
             SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); //Bu alanda gönderim yapacak hizmetin smtp adresini ve size verilen portu girmelisiniz.
-            NetworkCredential AccountInfo = new NetworkCredential("beoerp00@gmail.com", "zicihvcwnbiiugbw");
+            NetworkCredential AccountInfo = new NetworkCredential("", "");
             smtp.UseDefaultCredentials = false; //Standart doğrulama kullanılsın mı? -> Yalnızca gönderici özellikle istiyor ise TRUE işaretlenir.
             smtp.Credentials = AccountInfo;
             smtp.EnableSsl = true; //SSL kullanılarak mı gönderilsin...
