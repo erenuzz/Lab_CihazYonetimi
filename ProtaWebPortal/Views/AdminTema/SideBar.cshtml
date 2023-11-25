@@ -1,0 +1,180 @@
+﻿@if (User.IsInRole("Admin"))
+{
+	<div class="deznav">
+		<div class="deznav-scroll">
+			<ul class="metismenu" id="menu">
+				<li>
+					<a href="javascript:void()" class="ai-icon" aria-expanded="false">
+						<i class="flaticon-381-networking"></i>
+						<span class="nav-text">Anasayfa</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/AnaSayfa/Index/">Anasayfa</a></li>
+					</ul>
+				</li>
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-user-9"></i>
+						<span class="nav-text">Üyeler</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/Uyeler/Index/">Üye Listesi</a></li>
+					</ul>
+				</li>
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-box-1"></i>
+						<span class="nav-text">Cihazlar</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/Cihazlar/Index/">Cihaz Listesi</a></li>
+					</ul>
+				</li>
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="fa fa-ticket"></i>
+						<span class="nav-text">Rezervasyonlar</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/Rezervasyonlar/Index/">Rezervasyon Listesi</a></li>
+					</ul>
+				</li>
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-notepad"></i>
+						<span class="nav-text">Eğitimler</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/Egitim/Index/">Cihaz Eğitim Listesi</a></li>
+						<li><a href="/MentorEgitimleri/Index/">Mentor Eğitim Listesi</a></li>
+					</ul>					
+				</li>
+
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">						
+						<i class="fa fa-book"></i>
+						<span class="nav-text">Mentorlar</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/Mentor/Index/">Mentorlar Listesi</a></li>
+					</ul>
+				</li>
+				
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-networking-1"></i>
+						<span class="nav-text">Operatörler</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="./ui-accordion.html">Operatör Listesi</a></li>
+					</ul>
+				</li>
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-settings-6"></i>
+						<span class="nav-text">Ayarlar</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="./ayarlar.html">Ayarlar1</a></li>
+						<li><a href="./ayarlar.html">Ayarlar2</a></li>
+					</ul>
+				</li>
+
+			</ul>
+
+			<div class="copyright">
+				<p><strong>Piksel Bilişim</strong> © 2023 Tüm Hakları Saklıdır.</p>
+			</div>
+		</div>
+	</div>
+}
+
+else if (User.IsInRole("Standart Kullanici"))
+{
+	<div class="deznav">
+		<div class="deznav-scroll">
+			<ul class="metismenu" id="menu">
+				<li>
+					<a href="javascript:void()" class="has-arrow ai-icon" aria-expanded="false">
+						<i class="flaticon-381-networking"></i>
+						<span class="nav-text">Anasayfa</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/AnaSayfa/Index/">Anasayfa</a></li>
+					</ul>
+				</li>
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-box-1"></i>
+						<span class="nav-text">Cihazlar</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/Cihazlar/Index/">Cihaz Listesi</a></li>
+					</ul>
+				</li>
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="fa fa-ticket"></i>
+						<span class="nav-text">Rezervasyonlar</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/Rezervasyonlar/Index/">Rezervasyon Listesi</a></li>
+					</ul>
+				</li>
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-notepad"></i>
+						<span class="nav-text">Eğitimler</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/Egitim/Index/">Cihaz Eğitim Listesi</a></li>
+					</ul>					
+				</li>
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="fa fa-book"></i>
+						<span class="nav-text">Mentor Eğitimleri</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="/MentorEgitimleri/Index/">Mentor Eğitim Listesi</a></li>
+					</ul>
+				</li>
+											
+
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-networking-1"></i>
+						<span class="nav-text">Operatörler</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="./ui-accordion.html">Operatör Listesi</a></li>
+					</ul>
+				</li>
+				<li>
+					<a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-settings-6"></i>
+						<span class="nav-text">Ayarlar</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="./ayarlar.html">Ayarlar1</a></li>
+						<li><a href="./ayarlar.html">Ayarlar2</a></li>
+					</ul>
+				</li>
+
+			</ul>
+
+			<div class="copyright">
+				<p><strong>Piksel Bilişim</strong> © 2023 Tüm Hakları Saklıdır.</p>
+			</div>
+		</div>
+	</div>
+}

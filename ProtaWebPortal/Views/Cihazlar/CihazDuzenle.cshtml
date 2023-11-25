@@ -1,0 +1,119 @@
+﻿@using EntityLayer.Concrete
+@model Cihazlar
+@{
+    ViewData["Title"] = "CihazDuzenle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Css{
+    <link rel="stylesheet" href="~/Prota/prota/vendor/toastr/css/toastr.min.css" />
+}
+
+@section Script{
+    <script src="~/Prota/prota/vendor/toastr/js/toastr.min.js"></script>
+
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"><i class="flaticon-381-box-1"></i>Cihaz Bilgileri Düzenleme </h4>
+                </div>
+                <div class="card-body">
+                    <form class="form-group" method="post" id="form" enctype="multipart/form-data">
+                        <input type="hidden" id="id" name="id" value="@Model.Id" />
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Cihaz Adı</label>
+                                    <input type="text" class="form-control" value="@Model.CihazAdi" id="cihazadi" name="CihazAdi" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Cihaz Modeli</label>
+                                    <input type="text" class="form-control" value="@Model.SeriNumarasi" id="cihazmodeli" name="CihazModeli" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Seri Numarası</label>
+                                    <input type="text" class="form-control" value="@Model.SeriNumarasi" id="serinumarasi" name="SeriNumarasi" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Cihazın Alındığı Yıl</label>
+                                    <input type="date" class="form-control" value="@Model.CihazinAlindigiYil" id="alindigiyil" name="CihazinAlindigiYil" />
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+
+                                <div class="form-check mb-5">
+                                    <input class="form-check-input" value="" name="EgitimGerekliMi" type="checkbox" id="flexCheckChecked">
+                                    <label class="form-check-label" for="flexCheckChecked">
+                                        Eğitim Gerekli Mi?
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Günlük Kullanım(min saat/dk.)</label>
+                                    <input type="time" class="form-control" value="@Model.MinGunlukKullanim" id="mingunlukkullanim" name="MinGunlukKullanim" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Günlük Kullanım(max saat/dk.)</label>
+                                    <input type="time" class="form-control" value="@Model.MaxGunlukKullanim" id="maxgunlukkullanim" name="MaxGunlukKullanim" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Saatlik Fiyat</label>
+                                    <input type="text" class="form-control" value="@Model.SaatlikFiyat" id="saatlikFiyat" name="SaatlikFiyat" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Cihaz Görseli</label>
+                                    <input type="file" class="form-control" id="gorsel" name="CihazGorseli" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="kayit" class="btn btn-danger">Kaydet</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    $("#kayit").click(function (e) {
+        e.preventDefault();
+        var egitimgereklimi = $("#flexCheckChecked").prop("checked");
+        var formData = new FormData();
+        formData.append("id", $("#id").val());
+        formData.append("CihazAdi", $("#cihazadi").val());
+        formData.append("CihazModeli", $("#cihazmodeli").val());
+        formData.append("SeriNumarasi", $("#serinumarasi").val());
+        formData.append("CihazinAlindigiYil", $("#alindigiyil").val());
+        formData.append("MinGunlukKullanim", $("#mingunlukkullanim").val());
+        formData.append("MaxGunlukKullanim", $("#maxgunlukkullanim").val());
+        formData.append("SaatlikFiyat", $("#saatlikFiyat").val());
+        formData.append("CihazGorseli", $("#gorsel")[0].files[0]);
+        formData.append("EgitimGerekliMi", egitimGerekliMi);
+
+        $.ajax({
+            type: 'POST',
+            url: '/Cihazlar/CihazDuzenle/',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                toastr.success('Cihaz düzenlendi.', 'Lütfen bekleyin...');
+                setTimeout(function () {
+                    $(location).attr('href', '/Cihazlar/Index');
+                }, 500);
+            }
+        });
+    });
+</script>

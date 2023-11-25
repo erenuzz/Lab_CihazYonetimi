@@ -1,0 +1,462 @@
+﻿@using EntityLayer.Concrete
+@using System.Globalization;
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<Cihazlar>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+
+@section Css{
+    <link rel="stylesheet" href="~/Prota/prota/vendor/toastr/css/toastr.min.css" />
+
+
+
+}
+
+@section Script{
+    <script src="~/Prota/prota/vendor/toastr/js/toastr.min.js"></script>
+
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"><i class="flaticon-381-box-1"></i> Cihazlar </h4>
+                </div>
+                <div class="card-body">
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="d-flex justify-content-end">
+                            <a href="/Cihazlar/CihazEkle" class="btn btn-danger btn-sm mb-5 btn-icon-text">
+                                <i class="fa fa-plus btn-icon-prepend"></i>
+                                Yeni Cihaz Ekle
+                            </a>
+                        </div>
+                    }
+                   
+
+                    <form method="get" class="mb-2" action="/Cihazlar/Index">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <select name="searchTerm" class="selectpicker" data-live-search="true">
+                                        <option id="cihazAdi" value="@ViewBag.SearchTerm"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <button type="submit" data-toggle="tooltip" data-placement="top" title="Ara" class="btn btn-danger btn-sm"><i class="fa fa-search"></i></button>
+                                    <button type="submit" name="showAll" data-toggle="tooltip" data-placement="top" title="Tümünü Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-list"></i></button>
+
+                                    <a href="/Cihazlar/Excel/" data-toggle="tooltip" data-placement="top" title="Excel Tablosuna Aktar" class="btn btn-danger btn-sm"><i class="fa fa-file-excel-o"></i></a>
+
+                                    <a href="/Cihazlar/Pdf/" data-toggle="tooltip" data-placement="top" title="Pdf Tablosuna Aktar" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf-o"></i></a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+
+                    <div class="table-responsive">
+                        <table id="myTable" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Cihaz Adı</th>
+                                    <th scope="col">Cihaz Modeli</th>
+                                    <th scope="col">Cihaz Seri Numarası</th>
+                                    <th scope="col">Cihaz Durumu</th>
+                                    <th scope="col">İşlemler</th>
+                                </tr>
+                            </thead>
+                            @if (Model.Count > 0)
+                            {
+                                <tbody>
+
+                                    @foreach (var item in Model)
+                                    {
+                                        if (User.IsInRole("Admin") || item.CihazDurum == true)
+                                        {
+                                            <tr>
+                                                <td>@item.CihazAdi</td>
+                                                <td>@item.CihazModeli</td>
+                                                <td>@item.SeriNumarasi</td>
+
+                                                @if (User.IsInRole("Standart Kullanici"))
+                                                {
+                                                    <td>
+                                                        <div class="custom-control custom-switch">
+                                                           @* <input type="checkbox" class="custom-control-input" id="customSwitches_@item.Id" @((item.CihazDurum == true) ? "checked" : "") data-cihaz-id="@item.Id">*@
+                                                            <label  class="custom-control-label" for="customSwitches_@item.Id">
+                                                                @if (item.CihazDurum == true)
+                                                                {
+                                                                    <span>Kullanımda</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>Devre dışı</span>
+                                                                }
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                }
+                                                else if (User.IsInRole("Admin"))
+                                                {
+                                                    <td>
+                                                        <div class="custom-control custom-switch">
+                                                             <input type="checkbox" class="custom-control-input" id="customSwitches_@item.Id" @((item.CihazDurum == true) ? "checked" : "") data-cihaz-id="@item.Id">
+                                                            <label class="custom-control-label" for="customSwitches_@item.Id">
+                                                                @if (item.CihazDurum == true)
+                                                                {
+                                                                    <span>Kullanımda</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>Devre dışı</span>
+                                                                }
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                }
+
+                                               
+                                               
+
+                                                @if (User.IsInRole("Admin"))
+                                                {
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <a href="/Cihazlar/CihazDuzenle/@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-pencil"></i></a>
+                                                            <a href="#" data-toggle="modal" data-target="#cihaz_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-trash"></i></a>
+                                                            <a href="#" data-toggle="modal" data-target="#cihazdetay_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-info"></i></a>
+                                                            <a href="#" data-toggle="modal" data-idd="@item.Id" data-target="#cihazRezervasyonDetay_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1 cihazRezervasyon"><i class="fa fa-history"></i></a>
+                                                        </div>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                        <td>
+                                                        <a href="#" data-toggle="modal" data-target="#cihazdetay_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-info"></i></a>
+                                                        </td>
+                                                }
+                                            </tr>
+                                        }
+
+
+                                    }
+
+                                </tbody>
+                            }
+                            else
+                            {
+                                <tbody>
+                                    <tr class="mt-2">
+                                        <td colspan="7">
+                                            <div class="alert alert-danger solid alert-square text-center">Kayıt bulunamadı</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pull-right ml-3">
+                    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index",
+                    new
+                    {
+                    page
+                    }),
+                    new PagedListRenderOptions
+                    {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" },
+                    Display = PagedListDisplayMode.IfNeeded
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@foreach (var item in Model)
+{
+    <div class="modal fade" style="width:100%" id="cihazdetay_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cihaz Detayı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Cihaz Adı:</p>
+                    <p><b>@item.CihazAdi</b></p>
+                    <div class="dropdown-divider"></div>
+                    <p>Cihaz Modeli:</p>
+                    <p><b>@item.CihazModeli</b></p>
+                    <div class="dropdown-divider"></div>
+                    <p>Seri Numarası:</p>
+                    <p><b>@item.SeriNumarasi</b></p>
+                    <div class="dropdown-divider"></div>
+                    <p>Cihazın Alındığı Tarih:</p>
+                    <p><b>@item.CihazinAlindigiYil</b></p>
+                    <div class="dropdown-divider"></div>
+                    <p>Günlük Kullanım (min saat/dk.)</p>
+                    <p><b>@item.MinGunlukKullanim.ToString(@"hh\:mm")</b></p>
+                    <div class="dropdown-divider"></div>
+                    <p>Günlük Kullanım (max saat/dk.)</p>
+                    <p><b>@item.MaxGunlukKullanim.ToString(@"hh\:mm")</b></p>
+                    <div class="dropdown-divider"></div>
+                    <p>Cihaz Fiyatı</p>
+                    <p><b>@item.SaatlikFiyat</b></p>
+                    <div class="dropdown-divider"></div>
+                    <p>Cihaz Durumu:</p>
+                    @if (item.CihazDurum == true)
+                    {
+                        <p><b>Cihaz kullanılabilir</b></p>
+                    }
+                    else
+                    {
+                        <p><b>Cihaz kullanılamaz</b></p>
+                    }
+                    <div class="dropdown-divider"></div>
+                    <p>Cihaz Görseli:</p>
+                    <img src="@item.CihazGorseli" class="img-fluid" />
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-danger btn-sm light" data-dismiss="modal">Tamam</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+@foreach (var item in Model)
+{
+    <div class="modal fade" id="cihaz_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cihaz Silme Ekranı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Cihazı Silmek İstediğinize Emin Misiniz ? </div>
+                <div class="modal-footer">
+                    <a cihaz-id="@item.Id" class="btn btn-danger btn-sm sil">Sil</a>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+@foreach (var item in Model)
+{
+    <div class="modal fade" id="cihazRezervasyonDetay_@item.Id">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cihazın Tüm Rezervasyonları</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table id="tablo_@item.Id" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Başlangıç Tarihi</th>
+                                    <th scope="col">Bitiş Tarihi</th>
+                                    <th scope="col">Fiyat</th>
+                                    <th scope="col">Kullanıcı Adı</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">Tamam</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Onay</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Cihaz durumunu güncellemek istediğinize emin misiniz?
+                    <p class="text-danger"><small>Cihazı devre dışı bıraktığınız takdirde tüm rezervasyonlar silinecektir!</small></p>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm light modalHayirbtn" data-dismiss="modal">Hayır</button>
+                    <button type="button" class="btn btn-danger btn-sm modalEvetBtn" >Evet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $("[data-toggle=tooltip]").tooltip();
+
+        $.ajax({
+            type: 'GET',
+            url: '/Cihazlar/CihazListele/',
+            success: function (res) {
+                let selectElement = $('select[name="searchTerm"]');
+
+                for (let i = 0; i < res.length; i++) {
+                    console.log(res[i]);
+                    let cihazAdi = res[i].cihazAdi;
+                    let optionElement = $('<option></option>').attr('value', cihazAdi).text(cihazAdi);
+                    selectElement.append(optionElement);
+                }
+                // Bootstrap Selectpicker'ı güncelleme
+                selectElement.selectpicker({
+                    noneSelectedText: 'Cihaz seç',
+                    noneResultsText: 'Hiçbir Sonuç Bulunamadı'
+                    // Diğer dil ayarlarını buraya ekleyebilirsiniz
+                }).selectpicker('refresh');
+            }
+        });
+    });
+
+    $(".cihazRezervasyon").click(function (e) {
+        e.preventDefault();
+        var id = $(this).attr("data-idd");
+        console.log(id);
+        $.ajax({
+            type: 'GET',
+            url: '/Cihazlar/CihazRezervasyonBul/',
+            data: { id: id },
+            success: function (res) {
+                $("#tablo_" + id).empty();
+
+
+                var rowTh = $("<tr></tr>");
+                rowTh.append("<th>" + "Başlangıç Tarihi" + "</th>");
+                rowTh.append("<th>" + "Bitiş Tarihi" + "</th>");
+                rowTh.append("<th>" + "Fiyat" + "</th>");
+                rowTh.append("<th>" + "Kullanıcı Adı" + "</th>");
+                $("#tablo_" + id).append(rowTh);
+
+                var totalfiyat = 0;
+                for (var i = 0; i < res.length; i++) {
+                    var data = res[i];
+                    var baslangicTarihi = new Date(data.baslangicTarihi).toLocaleString();
+                    var bitisTarihi = new Date(data.bitisTarihi).toLocaleString();
+                    var fiyat = data.fiyati;
+                    var kullaniciAdi = data.kullaniciAdi;
+                    totalfiyat += fiyat;
+                    var row = $("<tr></tr>");
+                    row.append("<td>" + baslangicTarihi + "</td>");
+                    row.append("<td>" + bitisTarihi + "</td>");
+                    row.append("<td>" + fiyat + " ₺" + "</td>");
+                    row.append("<td>" + kullaniciAdi + "</td>");
+                    $("#tablo_" + id).append(row);
+                }
+
+                var rowTotal = $("<tr></tr>");
+                rowTotal.append("<td></td>");
+                rowTotal.append("<td></td>");
+                rowTotal.append("<td><strong>Toplam: " + totalfiyat + " ₺</strong></td>");
+                $("#tablo_" + id).append(rowTotal);
+            }
+
+        });
+    });
+
+    $(".sil").click(function (e) {
+        e.preventDefault();
+        var id = $(this).attr("cihaz-id");
+        console.log(id);
+        $.ajax({
+            url: "/Cihazlar/CihazSil",
+            type: "POST",
+            data: { id: id },
+            success: function (result) {
+
+                toastr.success('Cihaz başarılı bir şekilde silindi', '', { positionClass: 'toast-top-right' });
+
+                setTimeout(function () {
+                    window.location.reload();
+                }, 500);
+            }
+        });
+    });
+
+    
+
+    $(document).on('change', '.custom-control-input', function () {
+        var cihazId = $(this).data('cihaz-id');
+        var durum = $(this).prop('checked');
+
+        $('#myModal').modal('show');
+
+        $('.modalHayirbtn').off('click').on('click', function () {
+            var switchElement = $('#customSwitches_' + cihazId);
+            switchElement.prop('checked', !durum);
+        });
+
+        $('.modalEvetBtn').off('click').on('click', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/Cihazlar/CihazDurumDuzenle/',
+                type: 'POST',
+                data: { cihazId: cihazId, durum: durum },
+                success: function (response) {
+                    console.log('Durum başarıyla güncellendi.');
+                    toastr.success('Cihaz durumu güncellendi.', '', { positionClass: 'toast-top-right' });
+
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                },
+                error: function (error) {
+                    console.error('Durum güncelleme hatası:', error);
+                }
+            });
+
+            $('#myModal').modal('hide');
+        });
+    });
+
+
+</script>

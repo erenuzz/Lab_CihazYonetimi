@@ -1,0 +1,527 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<UyeListeModel> 
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Css{
+    <link rel="stylesheet" href="~/Prota/prota/vendor/toastr/css/toastr.min.css" />
+
+    <style>
+
+        #indirim {
+            position: relative;
+        }
+
+            #indirim .tooltip {
+                pointer-events: none;
+                position: absolute;
+                z-index: 9999;
+                left: 50%;
+                top: -40px;
+                opacity: 0;
+                -moz-transition: ease-out 300ms opacity 0ms;
+                -o-transition: ease-out 300ms opacity 0ms;
+                -webkit-transition: ease-out 300ms opacity;
+                -webkit-transition-delay: 0ms;
+                transition: ease-out 300ms opacity 0ms;
+            }
+
+                #indirim .tooltip span {
+                    display: block;
+                    white-space: nowrap;
+                    position: relative;
+                    background: rgba(0, 0, 0, 0.6);
+                    -moz-border-radius: 3px;
+                    -webkit-border-radius: 3px;
+                    border-radius: 3px;
+                    padding: 0px 8px;
+                    left: -50%;
+                    font-size: 14px;
+                    color: #fff;
+                }
+
+                    #indirim .tooltip span:after {
+                        top: 100%;
+                        border: solid transparent;
+                        content: " ";
+                        height: 0;
+                        width: 0;
+                        position: absolute;
+                        border-top-color: rgba(0, 0, 0, 0.6);
+                        border-width: 6px;
+                        left: 50%;
+                        margin-left: -6px;
+                    }
+
+            #indirim:hover span {
+                opacity: 1;
+            }
+    </style>
+}
+
+@section Script{
+    <script src="~/Prota/prota/vendor/toastr/js/toastr.min.js"></script>
+   
+
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            @if (TempData["hata"] != null)
+            {
+                <div id="mesaj" class="alert alert-danger">@TempData["hata"]</div>
+            }
+            @if (TempData["yetkimesaj"] != null)
+            {
+                <div id="mesaj" class="alert alert-danger">@TempData["yetkimesaj"]</div>
+            }
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"><i class="flaticon-381-user-9"></i> Üyeler </h4>
+                </div>
+
+
+                <div class="card-body">
+
+                    <form method="get" class="mb-2" action="/Uyeler/Index/">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <select name="uyefilter" class="selectpicker" data-live-search="true">
+                                        <option id="uyeAdi" value="@ViewBag.filter"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <button type="submit" data-toggle="tooltip" data-placement="top" title="Ara" class="btn btn-danger btn-sm"><i class="fa fa-search"></i></button>
+                                    <button type="submit" name="showAll" data-toggle="tooltip" data-placement="top" title="Tümünü Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-list"></i></button>
+
+                                    <a href="/Uyeler/Excel/" data-toggle="tooltip" data-placement="top" title="Excel Tablosuna Aktar" class="btn btn-danger btn-sm"><i class="fa fa-file-excel-o"></i></a>
+                                                                          
+
+                                    <a href="/Uyeler/Pdf/" data-toggle="tooltip" data-placement="top" title="Pdf Tablosuna Aktar" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf-o"></i></a>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table id="myTable" class="table table-bordered table-striped verticle-middle table-responsive-sm ">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Üye Adı</th>
+                                    <th scope="col">Üye Soyadı</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Kullanıcı Tipi</th>
+                                    <th scope="col">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Adi</td>
+                                        <td>@item.Soyadi</td>
+                                        <td>@item.Email</td>
+                                        @if (item.KullaniciTipi == "İ.K")
+                                        {
+                                            <td id="indirim">
+                                                @item.KullaniciTipi
+                                                <span class="tooltip">
+                                                    <span>İç Kullanıcı</span>
+                                                </span>
+
+                                            </td>
+                                        }
+                                        else if (item.KullaniciTipi == "D.K")
+                                        {
+                                            <td id="indirim">
+                                                @item.KullaniciTipi
+                                                <span class="tooltip">
+                                                    <span>Dış Kullanıcı</span>
+                                                </span>
+
+                                            </td>
+                                        }
+
+                                        <td>
+                                            <div class="d-flex">
+                                               
+                                                <a href="#" id="indirim" data-toggle="modal" data-target="#kullanicisil_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                    <i class="fa fa-trash"></i>
+                                                    <span class="tooltip">
+                                                        <span>Sil</span>
+                                                    </span>
+                                                </a>
+
+                                                <a href="/Uyeler/Yetkilendirme/@item.Id" id="indirim" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                    <i class="fa fa-user"></i>
+                                                    <span class="tooltip">
+                                                        <span>Yetkilendirme</span>
+                                                    </span>
+                                                </a>
+
+
+                                                <a href="#" id="indirim" data-toggle="modal" data-target="#kullaniciIndirim_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                    <i class="fa fa-money"></i>
+                                                    <span class="tooltip">
+                                                        <span>İndirim Tanımlama</span>
+                                                    </span>
+                                                </a>
+
+                                                <a href="#" id="indirim" data-idd="@item.Id" data-toggle="modal" data-target="#kullaniciRezervasyonlari_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1 uyeRez">
+                                                    <i class="fa fa-ticket"></i>
+                                                    <span class="tooltip">
+                                                        <span>Kullanıcının Rezervasyonları</span>
+                                                    </span>
+                                                </a>
+
+                                                <a href="#" id="indirim" egitim-idd="@item.Id" data-toggle="modal" data-target="#egitim_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1 uyeEgitim">
+                                                    <i class="fa fa-briefcase"></i>
+                                                    <span class="tooltip">
+                                                        <span>Kullanıcının Eğitimleri</span>
+                                                    </span>
+                                                </a>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pull-right ml-3">
+                    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index",
+                    new
+                    {
+                    page
+                    }),
+                    new PagedListRenderOptions
+                    {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" },
+                    Display = PagedListDisplayMode.IfNeeded
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@foreach (var item in Model)
+{
+    <div class="modal fade" id="kullanicisil_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Üye Paşifleştirme Ekranı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Üyeyi Pasifleştirmek İstediğinize Emin Misiniz ? </div>
+                <div class="modal-footer">
+                    <a kullanici-id="@item.Id" class="btn btn-danger btn-sm sil">Evet</a>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">Vazgeç</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@foreach (var item in Model)
+{
+    var uniqueId = "indirimOrani_" + item.Id;
+    var turId = "sec_" + item.Id;
+
+    <div class="modal fade" id="kullaniciIndirim_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Üye İndirim Tanımlama Ekranı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" class="form-group">
+                        <input type="hidden" value="@item.Id" name="id" id="id">
+
+                        <label>Kullanıcı Tipi</label>
+                        <select id="@turId" name="TurId" class="form-control sec">
+                            <option value="@item.TipId">@item.KullaniciTipi</option>
+                        </select>
+                        <br>
+                        <label>İndirim Yüzdesi</label>
+                        <input type="text" name="indirimYuzdesi" value="@item.IndirimYuzdesi" id="@uniqueId" placeholder="İndirim Tutarı" class="form-control">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a kullanici-Id="@item.Id" class="btn btn-danger btn-sm indirimduzenle" data-tur-id="@turId" data-indirim-id="@uniqueId">Kaydet</a>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">Vazgeç</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@foreach (var item in Model)
+{
+   
+    <div class="modal fade" id="kullaniciRezervasyonlari_@item.Id">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@item.Adi @item.Soyadi Tüm Rezervasyonları</h5>
+                   
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table id="tablo_@item.Id" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Başlangıç Tarihi</th>
+                                    <th scope="col">Bitiş Tarihi</th>
+                                    <th scope="col">Fiyat</th>
+                                    
+                                </tr>
+                            </thead>
+                           
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">Tamam</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@foreach (var item in Model)
+{
+
+    <div class="modal fade" id="egitim_@item.Id">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@item.Adi @item.Soyadi Tüm Eğitimleri</h5>
+
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table id="egitimtablo_@item.Id" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Cihaz Adı</th>
+                                    <th scope="col">Eğitim Durumu</th>                                   
+
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">Tamam</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<script>
+
+    $("#mesaj").fadeOut(5000);
+    $(document).ready(function () {
+        $("[data-toggle=tooltip]").tooltip();
+
+        $.ajax({
+            type: 'GET',
+            url: '/Uyeler/UyeListele/',
+            success: function (res) {
+                let selectElement = $('select[name="uyefilter"]');
+                for (let i = 0; i < res.length; i++) {
+                    console.log(res[i]);
+                    let uyeAdiSoyadi = res[i].adiSoyadi;
+                    let optionElement = $('<option></option>').attr('value', uyeAdiSoyadi).text(uyeAdiSoyadi);
+                    selectElement.append(optionElement);
+                }
+                // Bootstrap Selectpicker'ı güncelleme
+                selectElement.selectpicker({
+                    noneSelectedText: 'Üye seç',
+                    noneResultsText: 'Hiçbir Sonuç Bulunamadı'
+                    // Diğer dil ayarlarını buraya ekleyebilirsiniz
+                }).selectpicker('refresh');
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: '/Uyeler/KullaniciTipiListele/',
+            success: function (res) {
+                let selectElement = $(".sec");
+                for (let i = 0; i < res.length; i++) {
+                    let kullaniciTuru = res[i].kullaniciTuru; // Gerekli alan adını kullanın
+                    let TurId = res[i].id; // Gerekli alan adını kullanın
+                    let optionElement = $('<option></option>').attr('value', TurId).text(kullaniciTuru);
+                    selectElement.append(optionElement);
+                }
+            }
+        });
+    });
+
+    $(".indirimduzenle").click(function (e) {
+        e.preventDefault();
+
+        var indirimId = $(this).data("indirim-id"); // Benzersiz id değerini alın
+        var TurId = $(this).data("tur-id");
+
+        var formData = {
+            id: $(this).attr("kullanici-Id"),
+            indirimYuzdesi: $("#" + indirimId).val(), // Doğru indirim alanını seçin
+            TurId: $("#" + TurId).val(),
+        };
+
+        $.ajax({
+            type: 'Post',
+            url: '/Uyeler/KullaniciTipiDuzenleme/',
+            data: formData,
+            success: function (res) {
+                toastr.success('Değişiklikler kaydedildi.', '', { positionClass: 'toast-top-right' });
+                setTimeout(function () {
+                    window.location.reload();
+                }, 500)
+            }
+        })
+    })
+
+    $(".uyeRez").click(function (e) {
+        e.preventDefault();
+        var id = $(this).attr("data-idd");
+        console.log(id);
+        $.ajax({
+            type: 'GET',
+            url: '/Uyeler/UyeRezervasyonBul/',
+            data: { id: id },
+            success: function (res) {
+                $("#tablo_" + id).empty();
+
+                var rowTh = $("<tr></tr>");
+                rowTh.append("<th>" + "Başlangıç Tarihi" + "</th>");
+                rowTh.append("<th>" + "Bitiş Tarihi" + "</th>");
+                rowTh.append("<th>" + "Fiyat" + "</th>");
+                //rowTh.append("<th>" + "Kullanıcı Adı" + "</th>");
+                $("#tablo_" + id).append(rowTh);
+
+                var totalFiyat = 0; // Toplam fiyatı saklamak için değişken
+
+                for (var i = 0; i < res.length; i++) {
+                    var data = res[i];
+                    var baslangicTarihi = new Date(data.baslangicTarihi).toLocaleString();
+                    var bitisTarihi = new Date(data.bitisTarihi).toLocaleString();
+                    var fiyat = data.fiyati;
+                    var kullaniciAdi = data.kullaniciAdi;
+                    totalFiyat += fiyat;
+
+                    var row = $("<tr></tr>");
+                    row.append("<td>" + baslangicTarihi + "</td>");
+                    row.append("<td>" + bitisTarihi + "</td>");
+                    row.append("<td>" + fiyat + " ₺" + "</td>");
+                    //row.append("<td>" + kullaniciAdi + "</td>");
+                    $(".uyeAdi").val(kullaniciAdi);
+                    $("#tablo_" + id).append(row);
+                }
+
+                // Toplam fiyatı en alt satıra ekle
+                var rowTotal = $("<tr></tr>");
+                rowTotal.append("<td></td>");
+                rowTotal.append("<td></td>");
+                rowTotal.append("<td><strong>Toplam: " + totalFiyat + " ₺</strong></td>");
+                $("#tablo_" + id).append(rowTotal);
+            }
+        });
+    });
+
+
+    $(".uyeEgitim").click(function (e) {
+        e.preventDefault();
+        var id = $(this).attr("egitim-idd");
+        console.log(id);
+        $.ajax({
+            type: 'GET',
+            url: '/Uyeler/UyeEgitimleri/',
+            data: { id: id },
+            success: function (res) {
+                $("#egitimtablo_" + id).empty();
+                console.log(res);
+                var rowTh = $("<tr></tr>");
+                rowTh.append("<th>" + "Cihaz Adı" + "</th>");
+                rowTh.append("<th>" + "Eğitim Durumu" + "</th>");                
+
+                $("#egitimtablo_" + id).append(rowTh);
+                               
+
+                for (var i = 0; i < res.length; i++) {
+                    var data = res[i];
+                   
+                    var cihazadi = data.cihazAdi;
+                    var egitimdurum = data.egitimDurumu;
+                   
+
+                    var row = $("<tr></tr>");
+                    row.append("<td>" + cihazadi + "</td>");
+                    row.append("<td>" + egitimdurum + "</td>");
+                                     
+                    $("#egitimtablo_" + id).append(row);
+                }
+
+              
+            }
+        });
+    });
+
+
+    $(".sil").click(function (e) {
+        e.preventDefault();
+        var id = $(this).attr("kullanici-id");
+        console.log(id);
+        $.ajax({
+            url: "/Uyeler/KullaniciPasiflestir",
+            type: "POST",
+            data: { id: id },
+            success: function (result) {
+                toastr.success('Üye başarılı bir şekilde pasifleştirildi.', '', { positionClass: 'toast-top-right' });
+
+                setTimeout(function () {
+                    window.location.reload();
+                }, 500)
+            }
+        });
+    });
+
+   
+</script>
+

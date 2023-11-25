@@ -1,0 +1,587 @@
+﻿@using EntityLayer.Concrete
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model (IPagedList<EgitimIstekleriListe>,IPagedList<Cihazlar>)
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Css{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <style>
+
+        #indirim {
+            position: relative;
+        }
+
+            #indirim .tooltip {
+                pointer-events: none;
+                position: absolute;
+                z-index: 9999;
+                left: 50%;
+                top: -40px;
+                opacity: 0;
+                -moz-transition: ease-out 300ms opacity 0ms;
+                -o-transition: ease-out 300ms opacity 0ms;
+                -webkit-transition: ease-out 300ms opacity;
+                -webkit-transition-delay: 0ms;
+                transition: ease-out 300ms opacity 0ms;
+            }
+
+                #indirim .tooltip span {
+                    display: block;
+                    white-space: nowrap;
+                    position: relative;
+                    background: rgba(0, 0, 0, 0.6);
+                    -moz-border-radius: 3px;
+                    -webkit-border-radius: 3px;
+                    border-radius: 3px;
+                    padding: 0px 8px;
+                    left: -50%;
+                    font-size: 14px;
+                    color: #fff;
+                }
+
+                    #indirim .tooltip span:after {
+                        top: 100%;
+                        border: solid transparent;
+                        content: " ";
+                        height: 0;
+                        width: 0;
+                        position: absolute;
+                        border-top-color: rgba(0, 0, 0, 0.6);
+                        border-width: 6px;
+                        left: 50%;
+                        margin-left: -6px;
+                    }
+
+            #indirim:hover span {
+                opacity: 1;
+            }
+    </style>
+}
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"><i class="flaticon-381-box-1"></i>Cihaz Eğitimleri</h4>
+                </div>
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-end">
+
+                        <button type="button" class="btn btn-danger btn-sm mb-5 btn-icon-text" data-toggle="modal" data-target="#egitim">
+                            <i class="fa fa-plus btn-icon-prepend"></i>
+                            Eğitim İsteği Gönder
+                        </button>
+                    </div>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <form method="get" class="mb-2" action="/Egitim/Index/">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <select name="kullaniciAdi" class="selectpicker" data-live-search="true">
+                                            <option id="kullaniciAdi" value=""></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <select name="cihazAdi" class="selectpicker" data-live-search="true">
+                                            <option id="cihazAdi" value="">Lütfen cihaz seçin</option>
+                                            @foreach (var item in Model.Item2)
+                                            {
+                                                <option id="cihazAdi" value="@item.CihazAdi">@item.CihazAdi</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+                                        <button type="submit" data-toggle="tooltip" data-placement="top" title="Ara" class="btn btn-danger btn-sm"><i class="fa fa-search"></i></button>
+
+                                        <button type="submit" name="tumumuGor" data-toggle="tooltip" data-placement="top" title="Tüm Cihaz Eğitimlerini Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-list"></i></button>
+
+                                        <button type="submit" name="YeniEgitimIstekleri" data-toggle="tooltip" data-placement="top" title="Yeni Gelen Cihaz Eğitim İsteklerini Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-book"></i></button>
+
+                                        <button type="submit" name="devamedenEgitimler" data-toggle="tooltip" data-placement="top" title="Devam Eden Cihaz Eğitimlerini Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-spinner"></i></button>
+
+                                        <button type="submit" name="onaylananEgitimler" data-toggle="tooltip" data-placement="top" title="Onaylanan Cihaz Eğitimlerini Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-check"></i></button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    }
+                    else
+                    {
+                        <form method="get" class="mb-2" action="/Egitim/Index/">
+                            <div class="row">
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <select name="cihazAdi" class="selectpicker" data-live-search="true">
+                                            <option id="cihazAdi" value="">Lütfen cihaz seçin</option>
+                                            @foreach (var item in Model.Item2)
+                                            {
+                                                <option id="cihazAdi" value="@item.CihazAdi">@item.CihazAdi</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+                                        <button type="submit" data-toggle="tooltip" data-placement="top" title="Ara" class="btn btn-danger btn-sm"><i class="fa fa-search"></i></button>
+
+                                        <button type="submit" name="tumumuGor" data-toggle="tooltip" data-placement="top" title="Tüm Cihaz Eğitimlerini Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-list"></i></button>
+
+                                        <button type="submit" name="YeniEgitimIstekleri" data-toggle="tooltip" data-placement="top" title="Cihaz Eğitim İsteklerini Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-book"></i></button>
+
+                                        <button type="submit" name="devamedenEgitimler" data-toggle="tooltip" data-placement="top" title="Devam Eden Cihaz Eğitimlerini Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-spinner"></i></button>
+
+                                        <button type="submit" name="onaylananEgitimler" data-toggle="tooltip" data-placement="top" title="Onaylanan Cihaz Eğitimlerini Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-check"></i></button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    }
+
+                    <div class="table-responsive">
+                        <table id="myTable" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <th scope="col">Kullanıcı Adı</th>
+                                    }
+                                    <th scope="col">Cihaz Adı</th>
+                                    <th scope="col">Eğitim Durumu</th>
+                                    <th scope="col">İşlemler</th>
+                                </tr>
+                            </thead>
+                            @if (Model.Item1.Count > 0)
+                            {
+                                <tbody>
+
+                                    @foreach (var item in Model.Item1)
+                                    {
+
+                                        <tr>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <td>@item.KullaniciAdi</td>
+                                            }
+                                            <td>@item.CihazAdi</td>
+                                            <td>@item.EgitimNeDurumda</td>
+
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <a href="#" id="indirim" data-toggle="modal" data-target="#egitimSil_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                            <i class="fa fa-trash"></i>
+                                                            <span class="tooltip">
+                                                                <span>Sil</span>
+                                                            </span>
+                                                        </a>
+
+                                                        <a href="#" id="indirim" data-toggle="modal" data-target="#duzenle_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                            <i class="fa fa-pencil"></i>
+                                                            <span class="tooltip">
+                                                                <span>Düzenle</span>
+                                                            </span>
+                                                        </a>
+
+                                                        <a href="#" id="indirim" data-toggle="modal" data-target="#egitimDurum_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1 egitim_baslat">
+                                                            <i class="fa fa-briefcase"></i>
+                                                            <span class="tooltip">
+                                                                <span>Eğitimi Başlat</span>
+                                                            </span>
+                                                        </a>
+
+                                                        @if (item.EgitimNeDurumda == "Eğitim Başladı" || item.EgitimNeDurumda == "Eğitim Onaylandı")
+                                                        {
+                                                            <a href="#" id="indirim" data-toggle="modal" data-target="#egitimOnay_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1 egitimOnayla">
+                                                                <i class="fa fa-check"></i>
+                                                                <span class="tooltip">
+                                                                    <span>Eğitimi Tamamla</span>
+                                                                </span>
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="#" hidden id="indirim" data-toggle="modal" data-target="#egitimOnay_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1 egitimOnayla">
+                                                                <i class="fa fa-check"></i>
+                                                                <span class="tooltip">
+                                                                    <span>Eğitimi Tamamla</span>
+                                                                </span>
+                                                            </a>
+                                                        }
+
+
+
+
+                                                    </div>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <a href="#" id="indirim" data-toggle="modal" data-target="#egitimSil_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                            <i class="fa fa-trash"></i>
+                                                            <span class="tooltip">
+                                                                <span>Sil</span>
+                                                            </span>
+                                                        </a>
+
+                                                        <a href="#" id="indirim" data-toggle="modal" data-target="#duzenle_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                            <i class="fa fa-pencil"></i>
+                                                            <span class="tooltip">
+                                                                <span>Düzenle</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            }
+
+
+                                        </tr>
+
+
+
+                                    }
+
+                                </tbody>
+                            }
+                            else
+                            {
+                                <tbody>
+                                    <tr class="mt-2">
+                                        <td colspan="7">
+                                            <div class="alert alert-danger solid alert-square text-center">Kayıt bulunamadı</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pull-right ml-3">
+                    @Html.PagedListPager((IPagedList)Model.Item1, page => Url.Action("Index",
+                    new
+                    {
+                    page
+                    }),
+                    new PagedListRenderOptions
+                    {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" },
+                    Display = PagedListDisplayMode.IfNeeded
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="egitim" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eğitim İsteği Gönderme Ekranı</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" class="form-group">
+                    <div class="form-group">
+                        <label>Eğitim Almak İstediğiniz Cihazı Seçin</label>
+                        <select id="cihazId" name="cihazId" class="selectpicker form-control" data-live-search="true">
+                            @foreach (var item in Model.Item2)
+                            {
+                                <option id="cihazId" value="@item.Id">@item.CihazAdi</option>
+                            }
+                        </select>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn btn-danger btn-sm gonder">Gönder</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@foreach (var item in Model.Item1)
+{
+    <div class="modal fade" id="egitimDurum_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eğitimi Başlatma Ekranı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Eğitimi başlatmak istediğinize emin misiniz?</div>
+                <div class="modal-footer">
+                    <a egitim-id="@item.Id" class="btn btn-danger btn-sm baslat">Evet</a>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">Hayır</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@foreach (var item in Model.Item1)
+{
+    <div class="modal fade" id="egitimOnay_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eğitimi Onaylama Ekranı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Eğitimi onaylamak istediğinize emin misiniz?</div>
+                <div class="modal-footer">
+                    <a egitimonayla-id="@item.Id" class="btn btn-danger btn-sm onayla">Evet</a>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">Hayır</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@foreach (var item in Model.Item1)
+{
+    <div class="modal fade" id="egitimSil_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eğitimi Silme Ekranı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Eğitimi silmek istediğinize emin misiniz?</div>
+                <div class="modal-footer">
+                    <a sil-id="@item.Id" class="btn btn-danger btn-sm sil">Evet</a>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">Hayır</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@foreach (var item in Model.Item1)
+{
+    <div class="modal fade" id="duzenle_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cihaz Eğitimi Düzenleme Alanı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <div class="form-group">
+                            <select name="cihazId" id="cihazId_@item.Id" class="form-control">
+                                <option value="">Lütfen Cihaz Seçin</option>
+                                @foreach (var item2 in Model.Item2)
+                                {
+                                    <option value="@item2.Id">@item2.CihazAdi</option>
+                                }
+                            </select>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <a cih-id="@item.Id" class="btn btn-danger btn-sm cihazguncelle">Kaydet</a>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@section Script{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+}
+
+<script>
+
+
+    $(document).ready(function () {
+
+        $('[data-toggle="tooltip"]').tooltip()
+
+        let selectElement = $('select[name="cihazId"]');
+        selectElement.selectpicker({
+            noneSelectedText: 'Cihaz seç',
+            noneResultsText: 'Hiçbir Sonuç Bulunamadı'
+            // Diğer dil ayarlarını buraya ekleyebilirsiniz
+        }).selectpicker('refresh');
+
+
+        $(".cihazguncelle").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("cih-id");
+            var cihazId = $("#cihazId_" + id).val();
+            console.log(id);
+            $.ajax({
+                url: "/Egitim/Duzenle/",
+                type: "POST",
+                data: { 
+                    id: id ,
+                    cihazId: cihazId                
+                },
+                success: function (result) {
+                    toastr.success('Eğitim güncellendi.', '', { positionClass: 'toast-top-right' });
+
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        });
+                
+
+        $.ajax({
+            type: 'GET',
+            url: '/Egitim/KullaniciListe/',
+            success: function (res) {
+                let selectElement = $('select[name="kullaniciAdi"]');
+
+                for (let i = 0; i < res.length; i++) {
+                    console.log(res[i]);
+                    let adi = res[i].adi + " " + res[i].soyadi;
+                    let optionElement = $('<option></option>').attr('value', adi).text(adi);
+                    selectElement.append(optionElement);
+                }
+                // Bootstrap Selectpicker'ı güncelleme
+                selectElement.selectpicker({
+                    noneSelectedText: 'Kullanıcı seç',
+                    noneResultsText: 'Hiçbir Sonuç Bulunamadı'
+                    // Diğer dil ayarlarını buraya ekleyebilirsiniz
+                }).selectpicker('refresh');
+            }
+        });
+
+        $(".gonder").click(function (e) {
+            e.preventDefault();
+            var cihazId = $("#cihazId").val();
+            $.ajax({
+                type: 'Post',
+                url: '/Egitim/EgitimIstegiEkle/',
+                data: { cihazId: cihazId },
+                success: function (res) {
+                    console.log(res);
+                    if (res.status == false) {
+                        toastr.success('Eğitim isteği başarılı bir şekilde gönderildi.', '', { positionClass: 'toast-top-right' });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 500);
+                    }
+                    else{
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Uyarı',
+                            text: 'Bu cihaz için eğitim aldınız.Tekrar alamazsınız.',                           
+                        })
+                    }
+                   
+                }
+            })
+        })
+
+        $(".baslat").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("egitim-id");
+            console.log(id);
+            $.ajax({
+                url: "/Egitim/EgitimiBaslat/",
+                type: "POST",
+                data: { id: id },
+                success: function (result) {
+                    toastr.success('Eğitim başlatıldı.', '', { positionClass: 'toast-top-right' });
+
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        });
+
+        $(".onayla").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("egitimonayla-id");
+            console.log(id);
+            $.ajax({
+                url: "/Egitim/EgitimiOnayla/",
+                type: "POST",
+                data: { id: id },
+                success: function (result) {
+                    toastr.success('Eğitim onaylandı.', '', { positionClass: 'toast-top-right' });
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        });
+
+        $(".sil").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("sil-id");
+            console.log(id);
+            $.ajax({
+                url: "/Egitim/Sil/",
+                type: "POST",
+                data: { id: id },
+                success: function (result) {
+                    toastr.success('Eğitim silindi.', '', { positionClass: 'toast-top-right' });
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        });
+
+
+    })
+</script>

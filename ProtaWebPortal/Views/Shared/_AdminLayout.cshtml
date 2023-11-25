@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+  @await Html.PartialAsync("/Views/AdminTema/Header.cshtml")
+@RenderSection("Css",required:false)   
+ 
+<body>
+
+	<div id="preloader">
+		<div class="sk-three-bounce">
+			<div class="sk-child sk-bounce1"></div>
+			<div class="sk-child sk-bounce2"></div>
+			<div class="sk-child sk-bounce3"></div>
+		</div>
+	</div>
+	
+	<div id="main-wrapper">		
+		
+		@await Html.PartialAsync("/Views/AdminTema/Navbar.cshtml")
+		
+		@await Html.PartialAsync("/Views/AdminTema/SideBar.cshtml")
+		
+
+		<div class="content-body">
+			@RenderBody()
+			<div class="container-fluid">
+				<div class="row">
+				@*	<div class="col-xl-6 col-xxl-12">
+						<h4 class="text-center text-primary">
+							Prota-Web Yönetim Paneli</h4>
+							<hr>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="card avtivity-card">
+										<div class="card-body">
+											<div class="media align-items-center">
+												<span class="activity-icon bgl-primary mr-md-4 mr-3">
+													<i style="font-size: 25px;font-weight: bold;" class="text-primary flaticon-381-user-9"></i>
+												</span>
+												<div class="media-body">
+													<p class="fs-18 mb-2">Üyeler</p>
+													<span class="title text-black font-w600">42</span>
+												</div>
+											</div>
+											<div class="progress" style="height:5px;">
+												<div class="progress-bar bg-primary" style="width: 42%; height:5px;" role="progressbar">
+													<span class="sr-only">42 Complete</span>
+												</div>
+											</div>
+										</div>
+										<div class="effect bg-primary"></div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="card avtivity-card">
+										<div class="card-body">
+											<div class="media align-items-center">
+												<span class="activity-icon bgl-primary  mr-md-4 mr-3">
+													<i style="font-size: 25px;font-weight: bold;" class="text-primary flaticon-381-notepad"></i>
+												</span>
+												<div class="media-body">
+													<p class="fs-18 mb-2">Eğitimler</p>
+													<span class="title text-black font-w600">5</span>
+												</div>
+											</div>
+											<div class="progress" style="height:5px;">
+												<div class="progress-bar bg-primary" style="width: 82%; height:5px;" role="progressbar">
+													<span class="sr-only">5</span>
+												</div>
+											</div>
+										</div>
+										<div class="effect bg-primary"></div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="card avtivity-card">
+										<div class="card-body">
+											<div class="media align-items-center">
+												<span class="activity-icon bgl-primary mr-md-4 mr-3">
+													<i style="font-size: 25px;font-weight: bold;" class="text-primary flaticon-381-box-1"></i>
+												</span>
+												<div class="media-body">
+													<p class="fs-18 mb-2">Cihazlar</p>
+													<span class="title text-black font-w600">50</span>
+												</div>
+											</div>
+											<div class="progress" style="height:5px;">
+												<div class="progress-bar bg-primary" style="width: 90%; height:5px;" role="progressbar">
+													<span class="sr-only">50</span>
+												</div>
+											</div>
+										</div>
+										<div class="effect bg-primary"></div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="card avtivity-card">
+										<div class="card-body">
+											<div class="media align-items-center">
+												<span class="activity-icon bgl-primary  mr-md-4 mr-3">
+													<i style="font-size: 25px;font-weight: bold;" class="text-primary flaticon-381-networking-1"></i>
+												</span>
+												<div class="media-body">
+													<p class="fs-18 mb-2">Operatörler</p>
+													<span class="title text-black font-w600">40</span>
+												</div>
+											</div>
+											<div class="progress" style="height:5px;">
+												<div class="progress-bar bg-primary" style="width: 42%; height:5px;" role="progressbar">
+													<span class="sr-only">40</span>
+												</div>
+											</div>
+										</div>
+										<div class="effect bg-primary"></div>
+									</div>
+								</div>
+							</div>
+					</div>*@
+				</div>
+			</div>
+		</div>
+		
+
+		<div class="footer">
+			<div class="copyright">
+				<p>Copyright © &amp; Piksel Bilişim Tarafından <a href="http://www.pikselbilisim.com/" target="_blank">Tasarlandı.</a> 2023</p>
+			</div>
+		</div>
+		
+
+	</div>
+	
+    @await Html.PartialAsync("/Views/AdminTema/Script.cshtml")
+	@RenderSection("Script",required:false)
+</body>
+</html>

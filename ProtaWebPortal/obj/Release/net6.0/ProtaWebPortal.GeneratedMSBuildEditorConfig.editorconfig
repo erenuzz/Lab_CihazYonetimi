@@ -1,0 +1,133 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = ProtaWebPortal
+build_property.RootNamespace = ProtaWebPortal
+build_property.ProjectDir = C:\Users\uzere\Documents\GitHub\Prota_Web_Portal\ProtaWebPortal\ProtaWebPortal\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\uzere\Documents\GitHub\Prota_Web_Portal\ProtaWebPortal\ProtaWebPortal
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/AdminTema/Header.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5UZW1hXEhlYWRlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/AdminTema/Navbar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5UZW1hXE5hdmJhci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/AdminTema/Script.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5UZW1hXFNjcmlwdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/AdminTema/SideBar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5UZW1hXFNpZGVCYXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Anasayfa/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW5hc2F5ZmFcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Cihazlar/CihazDuzenle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2loYXpsYXJcQ2loYXpEdXplbmxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Cihazlar/CihazEkle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2loYXpsYXJcQ2loYXpFa2xlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Cihazlar/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2loYXpsYXJcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Egitim/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRWdpdGltXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Giris/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2lyaXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Kayit/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2F5aXRcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/MentorEgitimleri/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVudG9yRWdpdGltbGVyaVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Mentor/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVudG9yXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Rezervasyonlar/Duzenle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV6ZXJ2YXN5b25sYXJcRHV6ZW5sZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Rezervasyonlar/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV6ZXJ2YXN5b25sYXJcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Rezervasyonlar/RezervasyonDetay.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV6ZXJ2YXN5b25sYXJcUmV6ZXJ2YXN5b25EZXRheS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Rezervasyonlar/RezervasyonEkle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV6ZXJ2YXN5b25sYXJcUmV6ZXJ2YXN5b25Fa2xlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Rol/RolEkle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sXFJvbEVrbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Shared/Components/KullaniciBilgileriGetir/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcS3VsbGFuaWNpQmlsZ2lsZXJpR2V0aXJcRGVmYXVsdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Shared/_AdminLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Uyeler/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXllbGVyXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Uyeler/Yetkilendirme.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXllbGVyXFlldGtpbGVuZGlybWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/uzere/Documents/GitHub/Prota_Web_Portal/ProtaWebPortal/ProtaWebPortal/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-1o6q57rg0z

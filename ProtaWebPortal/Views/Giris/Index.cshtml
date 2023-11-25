@@ -1,0 +1,81 @@
+﻿@model KullaniciGirisModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Prota-Web Kayıt Paneli</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="~/Prota/prota/images/prota.ico">
+    <link href="~/Prota/prota/vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/Prota/prota/vendor/chartist/css/chartist.min.css">
+    <link href="~/Prota/prota/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="~/Prota/prota/vendor/owl-carousel/owl.carousel.css" rel="stylesheet">
+    <link href="~/Prota/prota/css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <div class="authincation mt-5 mb-5">
+        <div class="container">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-md-6">
+                    <div class="authincation-content">
+                        <div class="row no-gutters">
+                            <div class="col-xl-12">
+                                <div class="auth-form">
+                                    @if (ViewBag.hata != null)
+                                    {
+                                        <div class="alert alert-primary">@ViewBag.hata</div>
+                                    }
+                                    <h4 class="text-center mb-4 text-white shadow p-4">Prota Yönetici Giriş Ekranı</h4>
+                                    <form method="post" action="/Giris/Index/">
+                                        <div class="form-group">
+                                            <label class="mb-1 text-white"><strong>E posta</strong></label>
+                                            <input type="email" asp-for=UserName name="UserName" class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="mb-1 text-white"><strong>Şifre</strong></label>
+                                            <input type="text" asp-for=Password name="Password" class="form-control">
+                                        </div>
+
+                                        <div class="form-row d-flex justify-content-between mt-4 mb-2">
+                                            <div class="form-group">
+                                                <a class="text-white" href="//">Şifremi Unuttum?</a>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn bg-white text-primary btn-block">Giriş Yap</button>
+                                        </div>
+                                    </form>
+                                    <div class="new-account mt-3">
+                                        <p class="text-white">Üyeliğiniz yok mu? <a class="text-white" href="/Kayit/Index/">Kayıt olun.</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Prota/prota/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Prota/prota/vendor/global/global.min.js"></script>
+    <script src="~/Prota/prota/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/Prota/prota/js/custom.min.js"></script>
+    <script src="~/Prota/prota/js/deznav-init.js"></script>
+
+</body>
+
+</html>

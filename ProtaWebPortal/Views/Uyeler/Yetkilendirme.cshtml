@@ -1,0 +1,61 @@
+﻿@model List<YetkilendirmeModel>
+@{
+    ViewData["Title"] = "Yetkilendirme";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"><i class="flaticon-381-user-9"></i> Yetkilendirme </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="form-group">
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <div class="d-flex justify-content-center">
+                                <div class="col-lg-9 stretch-card">
+                                    <div class="card mb-5">
+                                        <div class="card-body">
+
+                                            <div class="form-check form-check-inline">
+                                                <input type="hidden" asp-for="@Model[i].RoleID" />
+                                                <input type="hidden" asp-for="@Model[i].Name" />
+                                                <div class="row align-items-center">
+                                                    <div class="col-1">
+                                                        <input type="checkbox" asp-for="@Model[i].Exists" class="form-check-input checkbox-role" />
+
+                                                    </div>
+                                                    <div class="col-8">
+                                                        <label class="form-check-label">@Model[i].Name</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <button class="btn btn-danger">Kaydet</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('.checkbox-role').on('change', function () {
+            $('.checkbox-role').not(this).prop('checked', false);
+        });
+    });
+</script>
+

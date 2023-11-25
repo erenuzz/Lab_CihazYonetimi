@@ -1,0 +1,949 @@
+﻿@using EntityLayer.Concrete
+@using System.Globalization;
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model (IPagedList<MentorEgitimleriModel>,IPagedList<Mentor> , IPagedList<KullaniciVeMentorEgitimleriModel>)
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Css{
+    <link rel="stylesheet" href="~/Prota/prota/vendor/toastr/css/toastr.min.css" />
+
+    <style>
+
+        #indirim {
+            position: relative;
+        }
+
+            #indirim .tooltip {
+                pointer-events: none;
+                position: absolute;
+                z-index: 9999;
+                left: 50%;
+                top: -40px;
+                opacity: 0;
+                -moz-transition: ease-out 300ms opacity 0ms;
+                -o-transition: ease-out 300ms opacity 0ms;
+                -webkit-transition: ease-out 300ms opacity;
+                -webkit-transition-delay: 0ms;
+                transition: ease-out 300ms opacity 0ms;
+            }
+
+                #indirim .tooltip span {
+                    display: block;
+                    white-space: nowrap;
+                    position: relative;
+                    background: rgba(0, 0, 0, 0.6);
+                    -moz-border-radius: 3px;
+                    -webkit-border-radius: 3px;
+                    border-radius: 3px;
+                    padding: 0px 8px;
+                    left: -50%;
+                    font-size: 14px;
+                    color: #fff;
+                }
+
+                    #indirim .tooltip span:after {
+                        top: 100%;
+                        border: solid transparent;
+                        content: " ";
+                        height: 0;
+                        width: 0;
+                        position: absolute;
+                        border-top-color: rgba(0, 0, 0, 0.6);
+                        border-width: 6px;
+                        left: 50%;
+                        margin-left: -6px;
+                    }
+
+            #indirim:hover span {
+                opacity: 1;
+            }
+    </style>
+}
+
+@section Script{
+    <script src="~/Prota/prota/vendor/toastr/js/toastr.min.js"></script>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title"><i class="fa fa-book"></i> Mentor Eğitimleri </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-end">
+                            <button type="button" data-toggle="modal" data-target="#mentoregitimeklemodal" class="btn btn-danger btn-sm mb-5 btn-icon-text">
+                                <i class="fa fa-plus btn-icon-prepend"></i>
+                                Yeni Eğitim Ekle
+                            </button>
+                        </div>
+
+
+                        <div class="table-responsive">
+                            <table id="myTable" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Mentor Adı</th>
+                                        <th scope="col">Eğitim Adı</th>
+                                        <th scope="col">Süresi</th>
+                                        <th scope="col">Başlangıç Tarihi</th>
+                                        <th scope="col">Bitiş Tarihi</th>
+                                        <th scope="col">Kontenjan</th>
+                                        <th scope="col">Eğitim Görseli</th>
+                                        <th scope="col">İşlemler</th>
+                                    </tr>
+                                </thead>
+
+                                @if (Model.Item1.Count > 0)
+                                {
+                                    <tbody>
+
+                                        @foreach (var item in Model.Item1)
+                                        {
+                                            <tr>
+                                                @if (item.MentorId == null)
+                                                {
+                                                    <td><b>Mentor Atanmadı</b></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.MentorAdi</td>
+                                                }
+                                                <td>@item.EgitimAdi</td>
+                                                <td>@item.Suresi</td>
+                                                <td>@item.BaslangicTarihi</td>
+                                                <td>@item.BitisTarihi</td>
+                                                <td>@item.Kontenjan</td>
+                                                @if (item.EgitimKapakFotografi != null)
+                                                {
+                                                    <td>
+                                                        <img src="@item.EgitimKapakFotografi" width="50px;" height="50px;">
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        <img src="~/ProjeGorsel/mentoregitim2.png" width="50px;" height="50px;">
+                                                    </td>
+                                                }
+
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <a href="#" id="indirim" data-toggle="modal" data-target="#mentoregitimsil_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                            <i class="fa fa-trash"></i>
+                                                            <span class="tooltip">
+                                                                <span>Sil</span>
+                                                            </span>
+                                                        </a>
+
+                                                        <a href="#" id="indirim" data-toggle="modal" data-target="#mentoregitimduzenle_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                            <i class="fa fa-pencil"></i>
+                                                            <span class="tooltip">
+                                                                <span>Düzenle</span>
+                                                            </span>
+                                                        </a>
+
+                                                        <a href="#" id="indirim" data-toggle="modal" data-target="#mentorata_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                            <i class="fa fa-user"></i>
+                                                            <span class="tooltip">
+                                                                <span>Mentor Atama</span>
+                                                            </span>
+                                                        </a>
+
+                                                        <a href="#" id="indirim" data-toggle="modal" data-idd="@item.Id" data-target="#katilimcilar_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1 katilimci">
+                                                            <i class="fa fa-user"></i>
+                                                            <span class="tooltip">
+                                                                <span>Katılımcılar</span>
+                                                            </span>
+                                                        </a>
+
+
+
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                }
+                                else
+                                {
+                                    <tbody>
+                                        <tr class="mt-2">
+                                            <td colspan="7">
+                                                <div class="alert alert-danger solid alert-square text-center">Kayıt bulunamadı</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                }
+
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="pull-right ml-3">
+                        @Html.PagedListPager((IPagedList)Model.Item1, page => Url.Action("Index",
+                    new
+                    {
+                    page
+                    }),
+                    new PagedListRenderOptions
+                    {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" },
+                    Display = PagedListDisplayMode.IfNeeded
+                    })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Silme*@
+    @foreach (var item in Model.Item1)
+    {
+        <div class="modal fade" id="mentoregitimsil_@item.Id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Mentor Eğitim Silme Ekranı</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Eğitimi Silmek İstediğinize Emin Misiniz ? </div>
+                    <div class="modal-footer">
+                        <a mentoregitim-id="@item.Id" class="btn btn-danger btn-sm sil">Sil</a>
+                        <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @*Düzenleme*@
+    @foreach (var item in Model.Item1)
+    {
+        <div class="modal fade" id="mentoregitimduzenle_@item.Id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Mentor Eğitimi Düzenleme Ekranı</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" class="form-group" enctype="multipart/form-data">
+                            <input type="hidden" class="id" name="id" value="@item.Id">
+                            <div class="form-group">
+                                <label>Eğitim Adı</label>
+                                <input type="text" class="form-control egitimadii" value="@item.EgitimAdi" required id="" name="EgitimAdi" data-item-id="@item.Id" />
+                            </div>
+                            <div class="form-group">
+                                <label>Eğitim Süresi</label>
+                                <input type="text" class="form-control suresii" value="@item.Suresi" required id="" name="Suresi" data-item-id="@item.Id" />
+                            </div>
+                            <div class="form-group">
+                                <label>Başlangıç Tarihi</label>
+                                <input type="datetime-local" class="form-control baslangictarihii" value="@item.BaslangicTarihi" id="" name="BaslangicTarihi" data-item-id="@item.Id" />
+                            </div>
+                            <div class="form-group">
+                                <label>Bitiş Tarihi</label>
+                                <input type="datetime-local" class="form-control bitistarihii" value="@item.BitisTarihi" id="" name="BitisTarihi" data-item-id="@item.Id" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Kontenjan</label>
+                                <input type="text" class="form-control kontenjann" value="@item.Kontenjan" id="" name="Kontenjan" data-item-id="@item.Id" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mentorlar</label>
+                                <select name="MentorId" id="MentorId__@item.Id" class="form-control">
+                                    <option value="">Lütfen Mentor Seçin</option>
+                                    @foreach (var item2 in Model.Item2)
+                                    {
+                                        <option value="@item2.Id">@item2.Adi @item2.Soyadi</option>
+                                    }
+                                </select>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Eğitim Görseli</label>
+                                <input type="file" class="form-control kapakGorseli" id="" name="kapakGorsel" data-item-id="@item.Id" />
+                            </div>
+
+
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a duzenle-id="@item.Id" class="btn btn-danger btn-sm duzenle">Değişiklikleri Kaydet</a>
+                        <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @*Ekleme*@
+    <div class="modal fade" id="mentoregitimeklemodal" tabindex="-1" role="dialog" aria-labelledby="mentoreklemodal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mentoreklemodal">Yeni Eğitim Ekleme</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" class="form-group" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>Eğitim Adı</label>
+                            <input type="text" class="form-control egitimadii_" required name="EgitimAdi" />
+                        </div>
+                        <div class="form-group">
+                            <label>Süresi (Örn:50 saat)</label>
+                            <input type="text" class="form-control suresii_" required name="Suresi" />
+                        </div>
+                        <div class="form-group">
+                            <label>Başlangıç Tarihi</label>
+                            <input type="datetime-local" class="form-control baslangictarihii_" required name="BaslangicTarihi" />
+                        </div>
+                        <div class="form-group">
+                            <label>Bitiş Tarihi</label>
+                            <input type="datetime-local" class="form-control bitistarihii_" required name="BitisTarihi" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kontenjan</label>
+                            <input type="text" class="form-control kontenjann_" required name="Kontenjan" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Eğitim Görseli</label>
+                            <input type="file" class="form-control" id="kapakGorseli_" name="kapakGorsel" />
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm ekle">Kaydet</button>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @foreach (var item in Model.Item1)
+    {
+        <div class="modal fade" id="mentorata_@item.Id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Eğitime Mentor Atama</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post">
+                            <div class="form-group">
+                                <select name="MentorId" id="MentorId_@item.Id" class="form-control">
+                                    <option value="">Lütfen Mentor Seçin</option>
+                                    @foreach (var item2 in Model.Item2)
+                                    {
+                                        <option value="@item2.Id">@item2.Adi @item2.Soyadi</option>
+                                    }
+                                </select>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <a ment-id="@item.Id" class="btn btn-danger btn-sm mentorKayit">Kaydet</a>
+                        <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @foreach (var item in Model.Item1)
+    {
+        <div class="modal fade" id="katilimcilar_@item.Id">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Katılımcılar</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table id="tablo_@item.Id" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Adı</th>
+                                        <th scope="col">Soyadi</th>
+                                        <th scope="col">Email</th>                                       
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">Tamam</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+
+
+}
+
+else
+{
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-home-tab" data-toggle="tab" data-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Mentor Eğitimleri</button>
+                        <button class="nav-link" id="nav-profile-tab" data-toggle="tab" data-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Alınan Eğitimler</button>
+                    </div>
+                </nav>
+
+
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title"><i class="fa fa-book"></i> Mentor Eğitimleri </h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="myTable" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Mentor Adı</th>
+                                                <th scope="col">Eğitim Adı</th>
+                                                <th scope="col">Süresi</th>
+                                                <th scope="col">Başlangıç Tarihi</th>
+                                                <th scope="col">Bitiş Tarihi</th>
+                                                <th scope="col">Kontenjan</th>
+                                                <th scope="col">Eğitim Görseli</th>
+                                                <th scope="col">İşlemler</th>
+                                            </tr>
+                                        </thead>
+
+                                        @if (Model.Item1.Count > 0)
+                                        {
+                                            <tbody>
+
+                                                @foreach (var item in Model.Item1)
+                                                {
+                                                    <tr>
+                                                        @if (item.MentorId == null)
+                                                        {
+                                                            <td><b>Mentor Atanmadı</b></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@item.MentorAdi</td>
+                                                        }
+                                                        <td>@item.EgitimAdi</td>
+                                                        <td>@item.Suresi</td>
+                                                        <td>@item.BaslangicTarihi</td>
+                                                        <td>@item.BitisTarihi</td>
+                                                        <td>@item.Kontenjan</td>
+                                                        @if (item.EgitimKapakFotografi != null)
+                                                        {
+                                                            <td>
+                                                                <img src="@item.EgitimKapakFotografi" width="50px;" height="50px;">
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <img src="~/ProjeGorsel/mentoregitim2.png" width="50px;" height="50px;">
+                                                            </td>
+                                                        }
+
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <a href="#" id="indirim" data-toggle="modal" data-target="#mentoregitimekatil_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                                    <i class="fa fa-arrow-right"></i>
+                                                                    <span class="tooltip">
+                                                                        <span>Eğitime Katıl</span>
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        }
+                                        else
+                                        {
+                                            <tbody>
+                                                <tr class="mt-2">
+                                                    <td colspan="7">
+                                                        <div class="alert alert-danger solid alert-square text-center">Kayıt bulunamadı</div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        }
+
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="pull-right ml-3">
+                                @Html.PagedListPager((IPagedList)Model.Item1, page => Url.Action("Index",
+                            new
+                            {
+                            page
+                            }),
+                            new PagedListRenderOptions
+                            {
+                            LiElementClasses = new string[] { "page-item" },
+                            PageClasses = new string[] { "page-link" },
+                            Display = PagedListDisplayMode.IfNeeded
+                            })
+                            </div>
+                        </div>
+
+                    </div>
+                                       
+                    
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title"><i class="fa fa-book"></i>Eğitimlerim</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="myTable" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Eğitim Adı</th>                                               
+                                                <th scope="col">Süresi</th>
+                                                <th scope="col">Başlangıç Tarihi</th>
+                                                <th scope="col">Bitiş Tarihi</th> 
+                                                <th scope="col">İşlemler</th>
+                                            </tr>
+                                        </thead>
+
+                                        @if (Model.Item3.Count > 0)
+                                        {
+                                            <tbody>
+
+                                                @foreach (var item in Model.Item3)
+                                                {
+                                                    <tr>
+                                                       
+                                                        <td>@item.EgitimAdi</td>
+                                                        <td>@item.Suresi</td>
+                                                        <td>@item.BaslangicTarihi</td>
+                                                        <td>@item.BitisTarihi</td>
+
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <a href="#" id="indirim" data-toggle="modal" data-target="#alinanegitimsil_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                                    <i class="fa fa-trash"></i>
+                                                                    <span class="tooltip">
+                                                                        <span>Sil</span>
+                                                                    </span>
+                                                                </a>
+                                                                <a href="#" id="indirim" data-toggle="modal" data-target="#alinanegitimduzenle_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1">
+                                                                    <i class="fa fa-pencil"></i>
+                                                                    <span class="tooltip">
+                                                                        <span>Düzenle</span>
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        }
+                                        else
+                                        {
+                                            <tbody>
+                                                <tr class="mt-2">
+                                                    <td colspan="7">
+                                                        <div class="alert alert-danger solid alert-square text-center">Kayıt bulunamadı</div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        }
+
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="pull-right ml-3">
+                                @Html.PagedListPager((IPagedList)Model.Item1, page => Url.Action("Index",
+                            new
+                            {
+                            page
+                            }),
+                            new PagedListRenderOptions
+                            {
+                            LiElementClasses = new string[] { "page-item" },
+                            PageClasses = new string[] { "page-link" },
+                            Display = PagedListDisplayMode.IfNeeded
+                            })
+                            </div>
+                        </div>
+
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+
+    @*Egitime katılma*@
+    @foreach (var item in Model.Item1)
+    {
+        <div class="modal fade" id="mentoregitimekatil_@item.Id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Eğitime Katılma Ekranı</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Eğitime Katılmak İstediğinize Emin Misiniz ? </div>
+                    <div class="modal-footer">
+                        <a mentoregitiminekatil-id="@item.Id" class="btn btn-danger btn-sm egitimekatil">Katıl</a>
+                        <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @*Silme*@
+    @foreach (var item in Model.Item3)
+    {
+        <div class="modal fade" id="alinanegitimsil_@item.Id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Alınan Mentor Eğitimini Silme Ekranı</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Eğitimi Silmek İstediğinize Emin Misiniz ? </div>
+                    <div class="modal-footer">
+                        <a alinanegitim-id="@item.Id" class="btn btn-danger btn-sm sill">Sil</a>
+                        <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    
+    @foreach (var item in Model.Item3)
+    {
+        <div class="modal fade" id="alinanegitimduzenle_@item.Id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Mentor Eğitimi Düzenleme Alanı</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post">
+                            <div class="form-group">
+                                <select name="mentorEgitimId" id="mentorEgitim_@item.Id" class="form-control">
+                                    <option value="">Lütfen Mentor Eğitimi Seçin</option>
+                                    @foreach (var item1 in Model.Item1)
+                                    {
+                                        <option value="@item1.Id">@item1.EgitimAdi</option>
+                                    }
+                                </select>   
+                               
+
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <a mentoregitimguncelle-id="@item.Id" class="btn btn-danger btn-sm egitimguncellee">Kaydet</a>
+                        <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+}
+
+
+<script>
+    $(document).ready(function () {
+        $(".ekle").click(function (e) {
+            e.preventDefault();
+            var formData = new FormData();
+            formData.append("EgitimAdi", $(".egitimadii_").val());
+            formData.append("Suresi", $(".suresii_").val());
+            formData.append("BaslangicTarihi", $(".baslangictarihii_").val());
+            formData.append("BitisTarihi", $(".bitistarihii_").val());
+            formData.append("Kontenjan", $(".kontenjann_").val());
+            formData.append("kapakGorsel", $("#kapakGorseli_")[0].files[0]);
+
+           
+            $.ajax({
+                type: 'Post',
+                url: '/MentorEgitimleri/Ekle/',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    console.log(formData);
+                    
+                    toastr.success('Yeni eğitim eklendi.', '', { positionClass: 'toast-top-right' });
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            })
+        })
+
+        $(".duzenle").click(function (e) {
+          
+            e.preventDefault();
+            var id = $(this).attr("duzenle-id");
+            var formData = new FormData();
+
+            // Find the corresponding input fields for each item
+            var egitimAdi = $(".egitimadii[data-item-id='" + id + "']").val();
+            var suresi = $(".suresii[data-item-id='" + id + "']").val();
+            var baslangicTarihi = $(".baslangictarihii[data-item-id='" + id + "']").val();
+            var bitisTarihi = $(".bitistarihii[data-item-id='" + id + "']").val();
+            var kontenjan = $(".kontenjann[data-item-id='" + id + "']").val();
+            var kapakGorsel = $(".kapakGorseli[data-item-id='" + id + "']")[0].files[0];
+
+            formData.append("id", id);
+            formData.append("EgitimAdi", egitimAdi);
+            formData.append("Suresi", suresi);
+            formData.append("BaslangicTarihi", baslangicTarihi);
+            formData.append("BitisTarihi", bitisTarihi);
+            formData.append("Kontenjan", kontenjan);
+            formData.append("MentorId", $("#MentorId__" + id).val());
+            formData.append("kapakGorsel", kapakGorsel);
+
+            $.ajax({
+                type: 'POST',
+                url: '/MentorEgitimleri/Duzenle/',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    toastr.success('Eğitim düzenlendi.', 'Lütfen bekleyin...');
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        })
+
+        $(".egitimguncellee").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("mentoregitimguncelle-id");
+            var mentorEgitimId = $("#mentorEgitim_" + id).val();
+            console.log(id);
+            $.ajax({
+                url: "/MentorEgitimleri/AlinanEgitimiDuzenle",
+                type: "POST",
+                data: { 
+                    id: id ,
+                    mentorEgitimId:mentorEgitimId,
+                   
+                },
+                success: function (result) {
+                    if(result.message == true){
+                        toastr.success('Eğitim başarılı bir şekilde düzenlendi.', '', { positionClass: 'toast-top-right' });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 500);
+                    }
+                    else{
+                        toastr.error('Eğitim kontenjanı dolu.', '', { positionClass: 'toast-top-right' });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 500);
+                    }
+                  
+                }
+            });
+        });
+
+        $(".sil").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("mentoregitim-id");
+            console.log(id);
+            $.ajax({
+                url: "/MentorEgitimleri/Sil",
+                type: "POST",
+                data: { id: id },
+                success: function (result) {
+                    toastr.success('Eğitim başarılı bir şekilde silindi', '', { positionClass: 'toast-top-right' });
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        });
+
+        $(".sill").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("alinanegitim-id");
+            console.log(id);
+            $.ajax({
+                url: "/MentorEgitimleri/AlinanEgitimiSil",
+                type: "POST",
+                data: { id: id },
+                success: function (result) {
+                    toastr.success('Alınan eğitim başarılı bir şekilde silindi', '', { positionClass: 'toast-top-right' });
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        });
+               
+        $(".mentorKayit").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("ment-id");  
+            var MentorId = $("#MentorId_" + id).val();
+            console.log(MentorId)
+            var formdata = {
+                id:id,
+                MentorId: MentorId,
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/MentorEgitimleri/MentorAtama/',
+                data: formdata,                
+                success: function (res) {
+                    console.log(res)
+                    toastr.success('Mentor başarılı bir şekilde atandı', '', { positionClass: 'toast-top-right' });
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+        $(".egitimekatil").click(function(e){
+            e.preventDefault();
+            var id = $(this).attr("mentoregitiminekatil-id");
+            $.ajax({
+                url: "/MentorEgitimleri/EgitimeKatil/",
+                type: "POST",
+                data: { MentorEgitimId: id },
+                success: function (result) {
+                    
+                    if(result.message == true){                       
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Bilgilendirme',
+                            text: 'Eğitim kontenjanı doldu.Bu eğitime katılamazsınız.',                           
+                            confirmButtonText: 'Tamam'
+
+                        })
+                    }
+
+                    else if (result.uyari == false) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Bilgilendirme',
+                            text: 'Bu eğitimi aldınız tekrar alamazsınız.',
+                            confirmButtonText: 'Tamam'
+
+                        })
+                    }
+                   
+                    else{
+                        toastr.success('Eğitime başarılı bir şekilde katıldınız.', '', { positionClass: 'toast-top-right' });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 500);
+                    }
+                   
+                }
+            });
+        })
+
+        $(".katilimci").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("data-idd");
+            console.log(id);
+            $.ajax({
+                type: 'GET',
+                url: '/MentorEgitimleri/Katilimcilar/',
+                data: { id: id },
+                success: function (res) {
+                    $("#tablo_" + id).empty();
+
+                    var rowTh = $("<tr></tr>");
+                    rowTh.append("<th>" + "Adı" + "</th>");
+                    rowTh.append("<th>" + "Soyadı" + "</th>");
+                    rowTh.append("<th>" + "Email" + "</th>");                   
+                    $("#tablo_" + id).append(rowTh);
+
+                   
+                    for (var i = 0; i < res.length; i++) {
+                        var data = res[i];
+                        console.log(data);
+                        var adi = data.adi;
+                        var soyadi = data.soyadi
+                        var mail = data.email;
+                        
+                       
+                        var row = $("<tr></tr>");
+                        row.append("<td>" + adi + "</td>");
+                        row.append("<td>" + soyadi + "</td>");
+                        row.append("<td>" + mail + "</td>");                       
+                        $("#tablo_" + id).append(row);
+                    }
+
+                   
+                }
+
+            });
+        });
+
+    })
+
+</script>

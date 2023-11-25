@@ -1,0 +1,358 @@
+﻿@using EntityLayer.Concrete;
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model (IPagedList<RezervasyonListeModel> , IQueryable<RezervasyonDetaylari> )
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+@section Css{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+
+                <div class="card-header">
+                    <h4 class="card-title"><i class="fa fa-ticket"></i> Rezervasyonlar </h4>
+                </div>
+
+                <div class="card-header">
+                    <h4 id="rezervasyonBaslik" class="card-title"><i class=""></i></h4>
+                </div>
+
+                <div class="card-body">
+                    <div class="d-flex justify-content-end">
+                        <a href="/Rezervasyonlar/RezervasyonEkle" class="btn btn-danger btn-sm mb-5 btn-icon-text">
+                            <i class="fa fa-plus btn-icon-prepend"></i>
+                            Yeni Rezervasyon Ekle
+                        </a>
+                    </div>
+
+                    <form method="get" class="mb-2" action="/Rezervasyonlar/Index/">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <select name="KullaniciAdi" class="selectpicker" data-live-search="true">
+                                        <option id="kullaniciAdi" value="@ViewBag.KullaniciAdi"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <select name="searchTerm" class="selectpicker" data-live-search="true">
+                                        <option id="cihazAdi" value="@ViewBag.SearchTerm"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input type="text" placeholder="Başlangıç Tarihi" class="form-control" name="baslangicTarihi"
+                                           onfocus="(this.type='date')">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input type="text" placeholder="Bitiş Tarihi" class="form-control" name="bitisTarihi"
+                                           onfocus="(this.type='date')">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <button type="submit" data-toggle="tooltip" data-placement="top" title="Ara" class="btn btn-danger btn-sm"><i class="fa fa-search"></i></button>
+                                    <button type="submit" name="showAll" data-toggle="tooltip" data-placement="top" title="Yeni Rezervasyonların Tümünü Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-list"></i></button>
+
+                                    <button type="submit" name="gecmisRezervasyonlar" data-toggle="tooltip" data-placement="top" title="Geçmiş Rezervasyonları Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-history"></i></button>
+
+                                    <button type="submit" name="grupRezervasyonlar" data-toggle="tooltip" data-placement="top" title="Grup Rezervasyonları Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-group"></i></button>
+
+                                    <button type="submit" id="gunluk" name="Gunluk" data-toggle="tooltip" data-placement="top" title="Günlük Rezervasyonları Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-calendar"></i></button>
+                                    
+                                    <button type="submit" id="haftalik" name="Haftalik" data-toggle="tooltip" data-placement="top" title="Haftalık Rezervasyonları Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-calendar"></i></button>
+                                    
+                                    <button type="submit" id="aylik" name="Aylik" data-toggle="tooltip" data-placement="top" title="Aylık Rezervasyonları Göster" value="true" class="btn btn-danger btn-sm"><i class="fa fa-calendar"></i></button>
+                                    
+                                  
+                                    <a href="/Rezervasyonlar/Excel/" data-toggle="tooltip" data-placement="top" title="Excel Tablosuna Aktar" class="btn btn-danger btn-sm"><i class="fa fa-file-excel-o"></i></a>
+                                    
+                                    <a href="/Rezervasyonlar/Pdf/" data-toggle="tooltip" data-placement="top" title="Pdf Tablosuna Aktar" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf-o"></i></a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table id="myTable" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Kullanıcı Adı</th>
+                                    <th scope="col">Cihaz Adı</th>
+                                    <th scope="col">Başlangıç Tarihi</th>
+                                    <th scope="col">Bitiş Tarihi</th>
+                                    <th scope="col">Toplam Tutar</th>                                    
+                                    <th scope="col">İşlemler</th>
+                                   
+                                </tr>
+                            </thead>
+
+
+
+                            @if (Model.Item1.Count() > 0)
+                            {
+                                var totalFiyat = Model.Item1.Sum(x => x.Fiyat);
+                                <tbody>
+                                    @foreach (var group in Model.Item1.GroupBy(x => x.Guid))
+                                    {
+                                        var firstItem = group.FirstOrDefault();
+                                        var otherItems = group.Skip(1).ToList();
+                                       
+
+                                        <tr>
+                                            <td>@firstItem.KullaniciAdi</td>
+                                            <td>@firstItem.CihazAdi</td>
+                                            <td>@(otherItems.Count > 0 ? "-" : firstItem.BaslangicTarihi)</td>
+                                            <td>@(otherItems.Count > 0 ? "-" : firstItem.BitisTarihi)</td>
+                                            <td>@firstItem.Fiyat <span class="text-right">₺</span></td>
+                                           
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a href="/Rezervasyonlar/Duzenle/@firstItem.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-pencil"></i></a>
+                                                    <a href="#" data-toggle="modal" data-target="#rzrv_@firstItem.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-trash"></i></a>
+                                                    <a href="#" data-toggle="modal" data-target="#fiyatdetay_@firstItem.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-info"></i></a>
+                                                    @if (otherItems.Count > 0)
+                                                    {
+                                                        <button class="btn btn-primary shadow btn-xs sharp mr-1" data-toggle="collapse" data-target="#guidCollapse_@firstItem.Id"><i class="fa fa-chevron-down"></i></button>
+                                                    }
+
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr id="guidCollapse_@firstItem.Id" class="collapse">
+                                            <td colspan="6">
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        @foreach (var item in group)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.KullaniciAdi</td>
+                                                                <td>@item.CihazAdi</td>
+                                                                <td>@(otherItems.Count > 0 ? item.BaslangicTarihi : "-")</td>
+                                                                <td>@(otherItems.Count > 0 ? item.BitisTarihi : "-")</td>
+                                                                <td>@item.Fiyat ₺</td>
+                                                                <td>
+                                                                    <div class="d-flex">
+                                                                        <a href="/Rezervasyonlar/Duzenle/@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-pencil"></i></a>
+                                                                        <a href="#" data-toggle="modal" data-target="#rzrv_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-trash"></i></a>
+                                                                        <a href="#" data-toggle="modal" data-target="#fiyatdetay_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-info"></i></a>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4" class="text-right">Toplam Tutar:</td>
+                                        <td>@totalFiyat ₺</td>
+                                    </tr>
+                                </tfoot>
+                            }
+
+
+
+
+
+                            else
+                            {
+                                <tbody>
+                                    <tr class="mt-2">
+                                        <td colspan="7">
+                                            <div class="alert alert-danger solid alert-square text-center">Kayıt bulunamadı</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            }
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pull-right ml-3">
+                    @Html.PagedListPager((IPagedList)Model.Item1, page => Url.Action("Index",
+                    new
+                    {
+                    page
+                    }),
+                    new PagedListRenderOptions
+                    {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" },
+                    Display = PagedListDisplayMode.IfNeeded
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@foreach (var item in Model.Item1)
+{
+    <div class="modal fade" id="rzrv_@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Rezervasyonu silmek istediğinize emin misiniz?
+                    <input id="id" name="id" type="hidden" value="@item.Id" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Vazgeç</button>
+                    <a rezervasyon-id="@item.Id" class="btn btn-primary btn-sm sil">Sil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@foreach (var item in Model.Item2)
+{
+    <div class="modal fade" id="fiyatdetay_@item.RezervasyonId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Rezervasyon Detayları</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label><b>Kullanıcı Adı:</b> @item.KullaniciAdi</label><br>
+                    <label><b>Cihaz Adı:</b> @item.CihazAdi</label><br>
+                    <label><b>Cihaz Saatlik Fiyatı:</b> @item.CihazSaatlikFiyat ₺</label><br>
+                    <label><b>Rezervasyon Başlangıç Tarihi:</b> @item.RezervasyonBaslangicTarihi</label><br>
+                    <label><b>Rezervasyon Bitiş Tarihi:</b> @item.RezervasyonBitisTarihi</label><br>
+                    <label><b>İndirim Yüzdesi:</b> @item.IndirimTutari %</label><br>
+                    <label><b>İndirim Tutarı:</b> @item.IndirimliFiyat ₺</label><br>
+                    <label><b>Toplam Tutar:</b> @item.ToplamFiyat ₺</label><br>
+                    <label><b>Cİhaz Görseli:</b></label><br>
+                    <img src="@item.CihazGorseli" width="200px" height="200px">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tamam</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+@section Script{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>   
+       
+}
+
+<script>
+
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+
+        $('.collapse').on('show.bs.collapse', function () {
+            $(this).parent().find('.fafa-chevron-down').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        });
+
+        $('.collapse').on('hide.bs.collapse', function () {
+            $(this).parent().find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: '/Rezervasyonlar/CihazListele/',
+            success: function (res) {
+                let selectElement = $('select[name="searchTerm"]');
+
+                for (let i = 0; i < res.length; i++) {
+                    console.log(res[i]);
+                    let cihazAdi = res[i].cihazAdi;
+                    let optionElement = $('<option></option>').attr('value', cihazAdi).text(cihazAdi);
+                    selectElement.append(optionElement);
+                }
+                // Bootstrap Selectpicker'ı güncelleme
+                selectElement.selectpicker({
+                    noneSelectedText: 'Cihaz seç',
+                    noneResultsText: 'Hiçbir Sonuç Bulunamadı'
+                    // Diğer dil ayarlarını buraya ekleyebilirsiniz
+                }).selectpicker('refresh');
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: '/Rezervasyonlar/KullaniciListe/',
+            success: function (res) {
+                let selectElement = $('select[name="KullaniciAdi"]');
+
+                for (let i = 0; i < res.length; i++) {
+                    console.log(res[i]);
+                    let adi = res[i].adi + " " + res[i].soyadi;
+                    let optionElement = $('<option></option>').attr('value', adi).text(adi);
+                    selectElement.append(optionElement);
+                }
+                // Bootstrap Selectpicker'ı güncelleme
+                selectElement.selectpicker({
+                    noneSelectedText: 'Kullanıcı seç',
+                    noneResultsText: 'Hiçbir Sonuç Bulunamadı'
+                    // Diğer dil ayarlarını buraya ekleyebilirsiniz
+                }).selectpicker('refresh');
+            }
+        });
+
+    });
+
+    
+    $(".sil").click(function (e) {
+        e.preventDefault();
+        var id = $(this).attr("rezervasyon-id");
+
+        $.ajax({
+            type: 'post',
+            url: '/Rezervasyonlar/Sil/',
+            data: { id: id },
+            success: function (res) {
+                toastr.success('Rezervasyon silindi.', 'Lütfen bekleyin...')
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            }
+        });
+    })
+
+  
+
+
+
+</script>
+
+
+

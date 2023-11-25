@@ -1,0 +1,299 @@
+﻿@using EntityLayer.Concrete
+@model (List<GelecekTarihtekiRezervasyonlar> , IQueryable<Rezervasyon>)
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    DateTime dt = DateTime.Now;
+}
+
+@section Css{
+    <link rel="stylesheet" href="~/Prota/prota/vendor/toastr/css/toastr.min.css" />
+}
+
+@section Script{
+    <script src="~/Prota/prota/vendor/toastr/js/toastr.min.js"></script>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-6 col-xxl-12">
+                <h4 class="text-center text-primary">
+                    Prota-Web Yönetim Paneli
+                </h4>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="card avtivity-card">
+                            <div class="card-body">
+                                <a href="/Uyeler/Index/">
+                                    <div class="media align-items-center">
+                                        <span class="activity-icon bgl-primary mr-md-4 mr-3">
+                                            <i style="font-size: 25px;font-weight: bold;" class="text-primary flaticon-381-user-9"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <p class="fs-18 mb-2">Üye Sayısı</p>
+                                            <span class="title text-black font-w600">@ViewBag.uyeSayisi</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress" style="height:5px;">
+                                        <div class="progress-bar bg-primary" style="width: 42%; height:5px;" role="progressbar">
+                                            <span class="sr-only">42 Complete</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="effect bg-primary"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="card avtivity-card">
+                            <div class="card-body">
+                                <a href="/Cihazlar/Index/">
+                                    <div class="media align-items-center">
+                                        <span class="activity-icon bgl-primary  mr-md-4 mr-3">
+                                            <i style="font-size: 25px;font-weight: bold;" class="text-primary flaticon-381-box-1"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <p class="fs-18 mb-2">Cihaz Sayısı</p>
+                                            <span class="title text-black font-w600">@ViewBag.cihazSayisi</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress" style="height:5px;">
+                                        <div class="progress-bar bg-primary" style="width: 82%; height:5px;" role="progressbar">
+                                            <span class="sr-only">5</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="effect bg-primary"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="card avtivity-card">
+                            <div class="card-body">
+                                <a href="/Rezervasyonlar/Index/">
+                                    <div class="media align-items-center">
+                                        <span class="activity-icon bgl-primary mr-md-4 mr-3">
+                                            <i style="font-size: 25px;font-weight: bold;" class="text-primary fa fa-ticket"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <p class="fs-18 mb-2">Aktif Rezervasyon Sayısı</p>
+                                            <span class="title text-black font-w600">@ViewBag.rezervasyonSayisi</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress" style="height:5px;">
+                                        <div class="progress-bar bg-primary" style="width: 90%; height:5px;" role="progressbar">
+                                            <span class="sr-only">50</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="effect bg-primary"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="card avtivity-card">
+                            <div class="card-body">
+                                <div class="media align-items-center">
+                                    <span class="activity-icon bgl-primary  mr-md-4 mr-3">
+                                        <i style="font-size: 25px;font-weight: bold;" class="text-primary fa fa-money"></i>
+                                    </span>
+                                    <div class="media-body">
+                                        <p class="fs-18 mb-2">Toplam Rezervasyon Gelirleri</p>
+                                        <span class="title text-black font-w600">@ViewBag.toplamFiyat  ₺</span>
+                                    </div>
+                                </div>
+                                <div class="progress" style="height:5px;">
+                                    <div class="progress-bar bg-primary" style="width: 42%; height:5px;" role="progressbar">
+                                        <span class="sr-only">40</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="effect bg-primary"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+else if (User.IsInRole("Standart Kullanici"))
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-6 col-xxl-12">
+                <h4 class="text-center text-primary">
+                    Prota-Web Yönetim Paneli
+                </h4>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="card avtivity-card">
+                            <div class="card-body">
+                                <a href="/Rezervasyonlar/Index/">
+                                    <div class="media align-items-center">
+                                        <span class="activity-icon bgl-primary mr-md-4 mr-3">
+                                            <i style="font-size: 25px;font-weight: bold;" class="text-primary fa fa-ticket"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <p class="fs-18 mb-2">Aktif Rezervasyon Sayısı</p>
+                                            <span class="title text-black font-w600">@ViewBag.kullaniciAktifRezervasyon</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress" style="height:5px;">
+                                        <div class="progress-bar bg-primary" style="width: 42%; height:5px;" role="progressbar">
+                                            <span class="sr-only">42 Complete</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="effect bg-primary"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="card avtivity-card">
+                            <div class="card-body">
+                                <a href="#">
+                                    <div class="media align-items-center">
+                                        <span class="activity-icon bgl-primary  mr-md-4 mr-3">
+                                            <i style="font-size: 25px;font-weight: bold;" class="text-primary fa fa-money"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <p class="fs-18 mb-2">Cari Durumu</p>
+                                            <span class="title text-black font-w600">@ViewBag.kullaniciRezervasyonFiyati ₺</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress" style="height:5px;">
+                                        <div class="progress-bar bg-primary" style="width: 82%; height:5px;" role="progressbar">
+                                            <span class="sr-only">5</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="effect bg-primary"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="card avtivity-card">
+                            <div class="card-body">
+                                <a href="/MentorEgitimleri/Index/">
+                                    <div class="media align-items-center">
+                                        <span class="activity-icon bgl-primary  mr-md-4 mr-3">
+                                            <i style="font-size: 25px;font-weight: bold;" class="text-primary fa fa-book"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <p class="fs-18 mb-2">Katıldığınız Mentor Eğitimleri</p>
+                                            <span class="title text-black font-w600">@ViewBag.mentoregitimtoplam</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="progress" style="height:5px;">
+                                        <div class="progress-bar bg-primary" style="width: 82%; height:5px;" role="progressbar">
+                                            <span class="sr-only">5</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="effect bg-primary"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="card avtivity-card">
+                            <div class="card-body">
+                                <a href="/Rezervasyonlar/Index/">
+                                    <div class="media align-items-center">
+                                        <span class="activity-icon bgl-primary  mr-md-4 mr-3">
+                                            <i style="font-size: 25px;font-weight: bold;" class="text-primary fa fa-bell"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <p class="fs-18 mb-2">Yakın Tarihteki Rezervasyonlarınız</p>
+                                            <div class="dropdown-divider"></div>
+                                            @foreach (var item in Model.Item1)
+                                            {
+                                                TimeSpan gunSayisi = item.BaslangicTarihi.Date - dt.Date;
+                                                var kalanGun = gunSayisi.TotalDays;
+                                                <label>Başlangıç Tarihi:</label>
+                                                <span class="text-black"> @item.BaslangicTarihi</span>
+
+                                                <br />
+                                                <label>Bitiş Tarihi:</label>
+                                                <span class="text-black"> @item.BitisTarihi</span>
+
+                                                <br />
+                                                <label>Kalan Gün Sayısı:</label>
+                                                <span class="text-black">@kalanGun Gün</span>
+
+                                                <div class="dropdown-divider"></div>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </a>                               
+                                <div class="progress" style="height:5px;">
+                                    <div class="progress-bar bg-primary" style="width: 82%; height:5px;" role="progressbar">
+                                        <span class="sr-only">5</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="effect bg-primary"></div>
+                        </div>
+                    </div>
+                                      
+                    <div class="col-sm-12">
+                        <div class="card avtivity-card">
+                            <div class="card-body">
+                                <a href="/Egitim/Index/">
+                                    <div class="media align-items-center">
+                                        <span class="activity-icon bgl-primary  mr-md-4 mr-3">
+                                            <i style="font-size: 25px;font-weight: bold;" class="text-primary fa fa-book"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <p class="fs-18 mb-2">Cihaz Eğitim İstekleri</p>
+                                                    <span class="title text-black font-w600">@ViewBag.egitimistekleri</span>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p class="fs-18 mb-2">Devam Eden Cihaz Eğitimleri</p>
+                                                    <span class="title text-black font-w600">@ViewBag.devamedenegitim</span>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p class="fs-18 mb-2">Tamamlanan Cihaz Eğitimleri</p>
+                                                    <span class="title text-black font-w600">@ViewBag.tamamlananegitim</span>
+                                                </div>
+                                            </div>
+                                          
+                                        </div>
+                                    </div>
+                                    <div class="progress" style="height:5px;">
+                                        <div class="progress-bar bg-primary" style="width: 82%; height:5px;" role="progressbar">
+                                            <span class="sr-only">5</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="effect bg-primary"></div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+
+
+

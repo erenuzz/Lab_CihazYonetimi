@@ -1,0 +1,514 @@
+﻿@using EntityLayer.Concrete
+@model Rezervasyon
+@{
+    ViewData["Title"] = "Duzenle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Css{
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <style>
+        .time-grid-slot-past {
+            color: red;
+        }
+
+        .time-grid-row-past {
+            background-color: red;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 20% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            .close-button:hover,
+            .close-button:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .full-width-event {
+            width: 120%;
+            align-items: center;
+        }
+
+    </style>
+
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"><i class="flaticon-381-box-1"></i> Rezervasyon Düzenleme</h4>
+                </div>
+                <div class="card-body">
+                    <form class="form-group" method="post" id="form">
+                        <input type="hidden" value="@Model.Id" name="rezervasyonId" />
+                        <input type="hidden" value="@Model.CihazId" name="id" id="id" />
+                        <div class="row">
+                            <div class="col-lg-12">
+
+                                <div class="form-group">
+                                    <label>Cihaz Adı</label>
+                                    <input type="text" class="form-control" readonly value="@ViewBag.cihazAdi" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Toplam Fiyat</label>
+                                    <input type="text" class="form-control" readonly value="@ViewBag.fiyat ₺" />
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label>Diğer Takvim Seçenekleri</label>
+                                    <select class="form-control rezTur">
+                                        <option>Lütfen rezervasyon türü seçin</option>
+                                        <option value="1">Günlük</option>
+                                        <option value="2">Haftalık</option>
+                                        <option value="3">Aylık</option>
+
+                                    </select>
+                                </div>
+                               
+                                <div style="width:100%" id="calendar"></div>
+
+
+                                <div class="modal">
+                                    <div class="modal-content">
+                                        <span class="close-button">&times;</span>
+                                        <div id="modal-message">
+                                            <form method="post" action="/Rezervasyonlar/Duzenle/" class="form-group">
+                                                
+                                                <div class="form-group">
+                                                    <label id="baslik"></label>
+                                                    <input type="text" name="BaslangicTarihi" class="text-dark form-control mb-2" id="baslangic" />
+                                                    <input type="text" name="BitisTarihi" class="text-dark form-control" id="bitis" />
+                                                    <input type="hidden" name="CihazId" value="@Model.CihazId" class="text-dark form-control" id="CihazId" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <textarea rows="3" asp-for="Aciklama" cols="9" id="aciklama" name="Aciklama" class="form-control"></textarea>
+                                                </div>
+                                                <button id="kayit" class="btn btn-danger">Değişiklikleri kaydet</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                             
+
+                               @* <div class="form-group">
+                                    <label>Açıklama</label>
+                                    <textarea required class="form-control" rows="4" id="aciklama" cols="9" name="Aciklama">@Model.Item1.Aciklama</textarea>
+                                </div>*@
+                            </div>
+                        </div>
+
+                       @* <button id="kayit" class="btn btn-danger">Kaydet</button>*@
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Script{
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+}
+
+<script>
+
+    $(document).ready(function () {
+             
+
+        var id = $("#id").val();
+        $(".rezTur").change(function(){
+           
+            if ($(".rezTur").val() == 1) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Rezervasyonlar/RezervasyonGetir/',
+                    data: { id: id },
+                    success: function (reservations) {
+                        console.log(reservations);
+                        var calendarEl = document.getElementById('calendar');
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'timeGridDay',
+                            slotDuration: '00:30',
+                            // Her bir saatlik zaman dilimi için bir etiket göster
+                            slotLabelFormat: {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false
+                            },
+                            selectable: true,
+                           
+                            selectAllow: function (selectInfo) {
+                                var currentTime = new Date();
+                                var currentHour = currentTime.getHours();
+                                var selectedDate = selectInfo.start.toDateString();
+                                var currentDate = currentTime.toDateString();
+
+                                if (selectedDate === currentDate) {
+                                    // Seçilen tarih bugün ise sadece geçerli saatler için seçim yapılabilir
+                                    return selectInfo.start.getHours() >= currentHour;
+                                } else {
+                                    // Gelecek tarihler için herhangi bir saat sınırlaması yok
+                                    return true;
+                                }
+                            },
+
+                            select: function (info) {
+                                var selectedStart = info.start;
+                                var selectedEnd = info.end;
+
+                                // Tarih bilgisini al
+                                var startDate = selectedStart.toLocaleDateString();
+                                var endDate = selectedEnd.toLocaleDateString();
+
+                                // Saat bilgisini al
+                                var startTime = selectedStart.getHours() + ":00";
+                                var endTime = selectedEnd.getHours() + ":00";
+
+                                $("#baslik").val('Rezervasyon saatleri:<br>');
+                                $("#baslangic").val(startDate + " " + startTime);
+                                $("#bitis").val(endDate + " " + endTime);
+                                // $("#aciklama").val(reservations.aciklama)
+
+                                var modal = document.querySelector('.modal');
+                                var modalContent = modal.querySelector('.modal-content');
+                                var closeButton = modal.querySelector('.close-button');
+
+                                modal.style.display = 'block';
+
+                                closeButton.addEventListener('click', function () {
+                                    modal.style.display = 'none';
+                                });
+
+                                var data = {
+                                    start: selectedStart,
+                                    end: selectedEnd
+                                };
+                            },
+                            locale: 'tr',
+                            buttonText: {
+                                today: 'Bugün',
+                                month: 'Ay',
+                                week: 'Hafta',
+                                day: 'Gün',
+                                list: 'Liste'
+                            },
+                            allDayText: 'Tüm gün',
+                            firstDay: 1,
+
+                        });
+
+                        for (var i = 0; i < reservations.length; i++) {
+                            var reservation = reservations[i];
+                            var start = new Date(reservation.baslangicTarihi); // Rezervasyon başlangıç saati
+                            var end = new Date(reservation.bitisTarihi); // Rezervasyon bitiş saati
+
+                            calendar.gotoDate(start, end);
+                            // Takvime işaretleme
+                            calendar.addEvent({
+                                title: reservation.aciklama,
+                                start: start,
+                                end: end,
+                                backgroundColor: '#889fef',
+                            });
+                        }
+
+                        calendar.render();
+
+                        var currentTime = new Date(); // Anlık zamanı al
+                        var currentHour = currentTime.getHours(); // Saati al
+                        var slotLabels = document.querySelectorAll('.fc-timegrid-slot-label');
+                        for (var i = 0; i < slotLabels.length; i++) {
+                            var slotLabel = slotLabels[i];
+                            var hour = parseInt(slotLabel.textContent);
+                            if (hour < currentHour) {
+                                slotLabel.classList.add('time-grid-slot-past');
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('Kayıtlar alınamadı.');
+                    }
+                });
+            }
+            else if($(".rezTur").val() == 2){
+                $.ajax({
+                    type: 'GET',
+                    url: '/Rezervasyonlar/RezervasyonGetir/',
+                    data: { id: id },
+                    success: function (reservations) {
+                        console.log(reservations);
+                        var calendarEl = document.getElementById('calendar');
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'timeGridWeek',
+                            slotDuration: '00:30',
+                            // Her bir saatlik zaman dilimi için bir etiket göster
+                            slotLabelFormat: {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false
+                            },
+                            selectable: true,
+                          
+                            selectAllow: function (selectInfo) {
+                                var currentTime = new Date();
+                                var currentHour = currentTime.getHours();
+                                var selectedDate = selectInfo.start.toDateString();
+                                var currentDate = currentTime.toDateString();
+
+                                if (selectedDate === currentDate) {
+                                    // Seçilen tarih bugün ise sadece geçerli saatler için seçim yapılabilir
+                                    return selectInfo.start.getHours() >= currentHour;
+                                } else {
+                                    // Gelecek tarihler için herhangi bir saat sınırlaması yok
+                                    return true;
+                                }
+                            },
+
+                            select: function (info) {
+                                var selectedStart = info.start;
+                                var selectedEnd = info.end;
+
+                                // Tarih bilgisini al
+                                var startDate = selectedStart.toLocaleDateString();
+                                var endDate = selectedEnd.toLocaleDateString();
+
+                                // Saat bilgisini al
+                                var startTime = selectedStart.getHours() + ":00";
+                                var endTime = selectedEnd.getHours() + ":00";
+
+                                $("#baslik").val('Rezervasyon saatleri:<br>');
+                                $("#baslangic").val(startDate + " " + startTime);
+                                $("#bitis").val(endDate + " " + endTime);
+                                // $("#aciklama").val(reservations.aciklama)
+
+                                var modal = document.querySelector('.modal');
+                                var modalContent = modal.querySelector('.modal-content');
+                                var closeButton = modal.querySelector('.close-button');
+
+                                modal.style.display = 'block';
+
+                                closeButton.addEventListener('click', function () {
+                                    modal.style.display = 'none';
+                                });
+
+                                var data = {
+                                    start: selectedStart,
+                                    end: selectedEnd
+                                };
+                            },
+                            locale: 'tr',
+                            buttonText: {
+                                today: 'Bugün',
+                                month: 'Ay',
+                                week: 'Hafta',
+                                day: 'Gün',
+                                list: 'Liste'
+                            },
+                            allDayText: 'Tüm gün',
+                            firstDay: 1,
+
+                        });
+
+                        for (var i = 0; i < reservations.length; i++) {
+                            var reservation = reservations[i];
+                            var start = new Date(reservation.baslangicTarihi); // Rezervasyon başlangıç saati
+                            var end = new Date(reservation.bitisTarihi); // Rezervasyon bitiş saati
+
+                            calendar.gotoDate(start, end);
+                            // Takvime işaretleme
+                            calendar.addEvent({
+                                title: reservation.aciklama,
+                                start: start,
+                                end: end,
+                                backgroundColor: '#889fef',
+                            });
+                        }
+
+                        calendar.render();
+
+                        var currentTime = new Date(); // Anlık zamanı al
+                        var currentHour = currentTime.getHours(); // Saati al
+                        var slotLabels = document.querySelectorAll('.fc-timegrid-slot-label');
+                        for (var i = 0; i < slotLabels.length; i++) {
+                            var slotLabel = slotLabels[i];
+                            var hour = parseInt(slotLabel.textContent);
+                            if (hour < currentHour) {
+                                slotLabel.classList.add('time-grid-slot-past');
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('Kayıtlar alınamadı.');
+                    }
+                });
+            }
+        
+            else if($(".rezTur").val() == 3){
+                $.ajax({
+                    type: 'GET',
+                    url: '/Rezervasyonlar/RezervasyonGetir/',
+                    data: { id: id },
+                    success: function (reservations) {
+                        console.log(reservations);
+                        var calendarEl = document.getElementById('calendar');
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'dayGridMonth',
+                            slotDuration: '00:30',
+                            // Her bir saatlik zaman dilimi için bir etiket göster
+                            slotLabelFormat: {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false
+                            },
+                            selectable: true,
+                            
+                            selectAllow: function (selectInfo) {
+                                var currentTime = new Date();
+                                var currentHour = currentTime.getHours();
+                                var selectedDate = selectInfo.start.toDateString();
+                                var currentDate = currentTime.toDateString();
+
+                                if (selectedDate === currentDate) {
+                                    // Seçilen tarih bugün ise sadece geçerli saatler için seçim yapılabilir
+                                    return selectInfo.start.getHours() >= currentHour;
+                                } else {
+                                    // Gelecek tarihler için herhangi bir saat sınırlaması yok
+                                    return true;
+                                }
+                            },
+
+                            select: function (info) {
+                                var selectedStart = info.start;
+                                var selectedEnd = info.end;
+
+                                // Tarih bilgisini al
+                                var startDate = selectedStart.toLocaleDateString();
+                                var endDate = selectedEnd.toLocaleDateString();
+
+                                // Saat bilgisini al
+                                //var startTime = selectedStart.getHours() + ":00";
+                                //var endTime = selectedEnd.getHours() + ":00";
+
+                                var dt = new Date();
+                                var time = dt.getHours() + ":" + dt.getMinutes();
+
+
+                                $("#baslik").val('Rezervasyon saatleri:<br>');
+                                $("#baslangic").val(startDate + " " + time);
+                                $("#bitis").val(endDate + " " + time);
+                                // $("#aciklama").val(reservations.aciklama)
+
+                                var modal = document.querySelector('.modal');
+                                var modalContent = modal.querySelector('.modal-content');
+                                var closeButton = modal.querySelector('.close-button');
+
+                                modal.style.display = 'block';
+
+                                closeButton.addEventListener('click', function () {
+                                    modal.style.display = 'none';
+                                });
+
+                                var data = {
+                                    start: selectedStart,
+                                    end: selectedEnd
+                                };
+                            },
+                            locale: 'tr',
+                            buttonText: {
+                                today: 'Bugün',
+                                month: 'Ay',
+                                week: 'Hafta',
+                                day: 'Gün',
+                                list: 'Liste'
+                            },
+                            allDayText: 'Tüm gün',
+                            firstDay: 1,
+
+                        });
+
+                        for (var i = 0; i < reservations.length; i++) {
+                            var reservation = reservations[i];
+                            var start = new Date(reservation.baslangicTarihi); // Rezervasyon başlangıç saati
+                            var end = new Date(reservation.bitisTarihi); // Rezervasyon bitiş saati
+
+                            calendar.gotoDate(start, end);
+                            // Takvime işaretleme
+                            calendar.addEvent({
+                                title: reservation.aciklama,
+                                start: start,
+                                end: end,
+                                backgroundColor: '#889fef',
+                            });
+                        }
+
+                        calendar.render();
+
+                        var currentTime = new Date(); // Anlık zamanı al
+                        var currentHour = currentTime.getHours(); // Saati al
+                        var slotLabels = document.querySelectorAll('.fc-timegrid-slot-label');
+                        for (var i = 0; i < slotLabels.length; i++) {
+                            var slotLabel = slotLabels[i];
+                            var hour = parseInt(slotLabel.textContent);
+                            if (hour < currentHour) {
+                                slotLabel.classList.add('time-grid-slot-past');
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('Kayıtlar alınamadı.');
+                    }
+                });
+            }
+        
+        })
+      
+       
+
+    
+    })
+
+
+</script>
+

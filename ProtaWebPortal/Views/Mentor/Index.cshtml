@@ -1,0 +1,278 @@
+﻿@using EntityLayer.Concrete
+@using System.Globalization;
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model (IPagedList<MentorListeModel> , IPagedList<Mentor>)
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Css{
+    <link rel="stylesheet" href="~/Prota/prota/vendor/toastr/css/toastr.min.css" />
+}
+
+@section Script{
+    <script src="~/Prota/prota/vendor/toastr/js/toastr.min.js"></script>
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"><i class="fa fa-book"></i> Mentorlar </h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" data-toggle="modal" data-target="#mentoreklemodal" class="btn btn-danger btn-sm mb-5 btn-icon-text">
+                            <i class="fa fa-plus btn-icon-prepend"></i>
+                            Yeni Mentor Ekle
+                        </button>
+                    </div>
+
+
+                    <div class="table-responsive">
+                        <table id="myTable" class="table table-bordered table-striped verticle-middle table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Adı</th>
+                                    <th scope="col">Soyadi</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Uzmanlık Alanı</th>
+                                    <th scope="col">İşlemler</th>
+                                </tr>
+                            </thead>
+
+                            @if (Model.Item1.Count > 0)
+                            {
+                                <tbody>
+
+                                    @foreach (var item in Model.Item1)
+                                    {
+                                        <tr>
+                                            <td>@item.Adi</td>
+                                            <td>@item.Soyadi</td>
+                                            <td>@item.EMail</td>
+                                            <td>@item.UzmanlikAlani</td>
+
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a href="#" data-toggle="modal" data-target="#mentorsil_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-trash"></i></a>
+
+                                                    <a href="#" data-toggle="modal" data-target="#mentorduzenle_@item.Id" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-pencil"></i></a>
+                                                                                                                                                                                                               
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            }
+                            else
+                            {
+                                <tbody>
+                                    <tr class="mt-2">
+                                        <td colspan="7">
+                                            <div class="alert alert-danger solid alert-square text-center">Kayıt bulunamadı</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pull-right ml-3">
+                    @Html.PagedListPager((IPagedList)Model.Item1, page => Url.Action("Index",
+                    new
+                    {
+                    page
+                    }),
+                    new PagedListRenderOptions
+                    {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" },
+                    Display = PagedListDisplayMode.IfNeeded
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Silme*@
+@foreach (var item in Model.Item1)
+{
+    <div class="modal fade" id="mentorsil_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mentor Silme Ekranı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Mentoru Silmek İstediğinize Emin Misiniz ? </div>
+                <div class="modal-footer">
+                    <a mentor-id="@item.Id" class="btn btn-danger btn-sm sil">Sil</a>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*Düzenleme*@
+@foreach (var item in Model.Item2)
+{
+    <div class="modal fade" id="mentorduzenle_@item.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mentor Düzenleme Ekranı</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" class="form-group">
+                        <input type="hidden" id="id" name="id" value="@item.Id">
+                        <div class="form-group">
+                            <label>Adı</label>
+                            <input type="text" class="form-control" value="@item.Adi" required id="adi" name="Adi" />
+                        </div>
+                        <div class="form-group">
+                            <label>Soyadı</label>
+                            <input type="text" class="form-control" value="@item.Soyadi" required id="soyadi" name="Soyadi" />
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" class="form-control" value="@item.Email" required id="mail" name="Email" />
+                        </div>
+                        <div class="form-group">
+                            <label>Uzmanlık Alanı</label>
+                            <input type="text" class="form-control" value="@item.UzmanlikAlani" required id="uzmanlikalani" name="UzmanlikAlani" />
+                        </div>
+                                             
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm duzenle">Değişiklikleri Kaydet</button>
+                    <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*Ekleme*@
+<div class="modal fade" id="mentoreklemodal" tabindex="-1" role="dialog" aria-labelledby="mentoreklemodal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mentoreklemodal">Yeni Mentor Ekleme</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" class="form-group">
+                    <div class="form-group">
+                        <label>Adı</label>
+                        <input type="text" class="form-control" required id="adii" name="Adi" />
+                    </div>
+                    <div class="form-group">
+                        <label>Soyadı</label>
+                        <input type="text" class="form-control" required id="soyadii" name="Soyadi" />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control"  required id="maill" name="EMail" />
+                    </div>
+                    <div class="form-group">
+                        <label>Uzmanlık Alanı</label>
+                        <input type="text" class="form-control" required id="uzmanlikalanii" name="UzmanlikAlani" />
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-sm ekle">Kaydet</button>
+                <button type="button" class="btn btn-primary btn-sm light" data-dismiss="modal">İptal Et</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $(".ekle").click(function(e){
+            e.preventDefault();
+            var dataForm = {
+                Adi: $("#adii").val(),
+                Soyadi: $("#soyadii").val(),
+                EMail: $("#maill").val(),
+                UzmanlikAlani: $("#uzmanlikalanii").val(),
+                
+            };
+            $.ajax({
+                type:'Post',
+                url: '/Mentor/MentorEkle/',
+                data:dataForm,
+                success:function(res){
+                    toastr.success('Yeni mentor eklendi.', '', { positionClass: 'toast-top-right' });
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            })
+        })
+
+        $(".duzenle").click(function(e){
+            e.preventDefault();
+            var formData = new FormData();
+            formData.append("id", $("#id").val());
+            formData.append("Adi", $("#adi").val());
+            formData.append("Soyadi", $("#soyadi").val());
+            formData.append("Email", $("#mail").val());
+            formData.append("UzmanlikAlani", $("#uzmanlikalani").val());
+
+            $.ajax({
+                type: 'POST',
+                url: '/Mentor/Duzenle/',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    toastr.success('Mentor düzenlendi.', 'Lütfen bekleyin...');
+                    setTimeout(function () {
+                       window.location.reload();
+                    }, 500);
+                }
+            });
+        })
+
+        $(".sil").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("mentor-id");
+            console.log(id);
+            $.ajax({
+                url: "/Mentor/Sil",
+                type: "POST",
+                data: { id: id },
+                success: function (result) {
+                    toastr.success('Mentor başarılı bir şekilde silindi', '', { positionClass: 'toast-top-right' });
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        });
+    })
+   
+</script>
