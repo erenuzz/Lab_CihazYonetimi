@@ -15,7 +15,7 @@ namespace DataAccess.Concrete
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("server=217.116.199.169;database=ProtaWebPortalDb; Persist Security Info=True; User ID=Prota;Password=Piksel6650.;");
+            optionsBuilder.UseSqlServer("connection string");
           
         }
 
@@ -30,7 +30,3 @@ namespace DataAccess.Concrete
         public DbSet<KullaniciveMentorEgitimleri> kullaniciveMentorEgitimleris { get; set; }
     }
 }
-
-//ProtaWebPortalDb
-//Prota
-//Piksel6650.
